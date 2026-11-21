@@ -291,7 +291,7 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
     <aside class="side" id="sideL">
       <div class="side-head">NOW PLAYING</div>
       <div id="npJacket"></div>
-      <div><div id="npTitle">NEON RUNNER</div><div id="npMeta">—</div></div>
+      <div><div id="npTitle">CANON</div><div id="npMeta">—</div></div>
       <div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <div class="side-block"><div class="side-label">BEST RECORD</div><div id="bestBox">—</div></div>
       <div class="side-block"><div class="side-label">操作方法 / CONTROLS</div>
@@ -463,73 +463,73 @@ const DIFFS={
 const FEVER_AT=30;
 
 /* ================= config / records ================= */
-const cfg=Object.assign({diff:"normal",speed:3,offset:0,muted:false,track:"neon"},loadJSON("otogun_cfg_v1",{}));
+const cfg=Object.assign({diff:"normal",speed:3,offset:0,muted:false,track:"canon"},loadJSON("otogun_cfg_v1",{}));
 cfg.speed=clamp(cfg.speed|0||3,1,5); cfg.offset=clamp(cfg.offset|0,-120,120);
 if(!DIFFS[cfg.diff])cfg.diff="normal";
 const bests=loadJSON("otogun_best_v1",{});
 const saveCfg=()=>saveJSON("otogun_cfg_v1",cfg);
 
-/* ================= track data (original compositions) ================= */
-const NEON_CH=[
- [[0,4,2],[2,3,2],[4,2,4],[8,0,4],[12,2,2],[14,3,2]],
- [[0,4,6],[6,6,2],[8,5,4],[12,4,4]],
- [[0,7,2],[2,6,2],[4,5,4],[8,4,4],[12,3,2],[14,2,2]],
- [[0,3,6],[6,2,2],[8,0,8]],
- [[0,4,2],[2,3,2],[4,2,4],[8,0,4],[12,2,2],[14,3,2]],
- [[0,4,6],[6,6,2],[8,5,4],[12,4,4]],
- [[0,7,2],[2,6,2],[4,5,4],[8,7,4],[12,6,2],[14,5,2]],
- [[0,4,4],[4,2,4],[8,0,8]]];
-const SAKURA_CH=[
- [[0,3,2],[2,4,2],[4,3,4],[8,2,4],[12,1,2],[14,2,2]],
- [[0,3,6],[6,5,2],[8,4,4],[12,3,4]],
- [[0,7,2],[2,6,2],[4,5,4],[8,4,4],[12,3,2],[14,2,2]],
- [[0,3,6],[6,2,2],[8,0,8]],
- [[0,3,2],[2,4,2],[4,3,4],[8,2,4],[12,1,2],[14,2,2]],
- [[0,3,6],[6,5,2],[8,4,4],[12,3,4]],
- [[0,5,2],[2,6,2],[4,7,4],[8,8,4],[12,7,2],[14,6,2]],
- [[0,5,4],[4,3,4],[8,0,8]]];
-const HYPER_CH=[
- [[0,4,2],[2,4,2],[4,6,2],[6,4,2],[8,7,4],[12,6,2],[14,4,2]],
- [[0,5,2],[2,5,2],[4,4,2],[6,2,2],[8,4,6],[14,2,2]],
- [[0,4,2],[2,6,2],[4,7,2],[6,9,2],[8,7,4],[12,6,2],[14,7,2]],
- [[0,8,4],[4,7,4],[8,6,4],[12,4,4]],
- [[0,4,2],[2,4,2],[4,6,2],[6,4,2],[8,7,4],[12,6,2],[14,4,2]],
- [[0,5,2],[2,5,2],[4,4,2],[6,2,2],[8,4,6],[14,2,2]],
- [[0,7,2],[2,7,2],[4,9,2],[6,7,2],[8,6,4],[12,4,2],[14,6,2]],
- [[0,4,4],[4,2,4],[8,0,8]]];
+/* ================= track data (public-domain classical arrangements) ================= */
+const CANON_CH=[
+ [[0,9,8],[8,8,8]],
+ [[0,7,8],[8,6,8]],
+ [[0,5,8],[8,4,8]],
+ [[0,5,8],[8,6,8]],
+ [[0,7,8],[8,6,8]],
+ [[0,5,8],[8,4,8]],
+ [[0,3,8],[8,2,8]],
+ [[0,3,8],[8,1,8]]];
+const ODE_CH=[
+ [[0,2,4],[4,2,4],[8,3,4],[12,4,4]],
+ [[0,4,4],[4,3,4],[8,2,4],[12,1,4]],
+ [[0,0,4],[4,0,4],[8,1,4],[12,2,4]],
+ [[0,2,4],[4,1,4],[8,1,8]],
+ [[0,2,4],[4,2,4],[8,3,4],[12,4,4]],
+ [[0,4,4],[4,3,4],[8,2,4],[12,1,4]],
+ [[0,0,4],[4,0,4],[8,1,4],[12,2,4]],
+ [[0,1,4],[4,0,4],[8,0,8]]];
+const FATE_CH=[
+ [[0,4,2],[2,4,2],[4,4,2],[6,2,10]],
+ [[0,3,2],[2,3,2],[4,3,2],[6,1,10]],
+ [[0,4,2],[2,4,2],[4,4,2],[6,2,10]],
+ [[0,6,2],[2,6,2],[4,6,2],[6,4,10]],
+ [[0,4,2],[2,4,2],[4,4,2],[6,2,10]],
+ [[0,3,2],[2,3,2],[4,3,2],[6,1,10]],
+ [[0,2,2],[2,2,2],[4,2,2],[6,0,10]],
+ [[0,1,2],[2,2,2],[4,3,2],[6,4,10]]];
 const SN_ROLL=["....x.......x...","....x.......x...","....x...x...x...","x.x.x.x.x.x.x.x."];
 const TRACKS=[
- {id:"neon",title:"NEON RUNNER",jp:"ネオン・ランナー",bpm:128,hue:205,kit:"neon",lead:"saw",
-  root:57,leadRoot:69,scale:[0,2,3,5,7,8,10],prog:[0,5,2,6],stack:[0,2,4],
+ {id:"canon",title:"CANON",jp:"パッヘルベルのカノン",bpm:120,hue:150,kit:"neon",lead:"pluck",
+  root:50,leadRoot:62,scale:[0,2,4,5,7,9,11],prog:[0,4,5,2,3,0,3,4],stack:[0,2,4],
   sections:[
    {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5},
-   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r.r.r.r.r.r.r.r.",arp:2,arpV:.7,fill:1},
-   {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r.r.r.r.r.r.r.r.",pad:1,arp:2,arpV:.7,riser:2},
-   {name:"CHORUS",bars:8,kick:"x...x...x...x..x",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",bass:"r.r.r.r.r.r.r.r.",stabs:"x..x..x...x.x...",arp:4,arpV:.6,melody:NEON_CH,crash:1,fill:1},
-   {name:"BREAK",bars:4,kick:"x...............",snare:"........x.......",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5,melody:[[[0,4,10]],[],[[0,2,10]],[]],down:1},
-   {name:"FINAL",bars:8,kick:"x...x...x...x..x",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.x.",hatV:.7,hatO:"..x...x...x...x.",bass:"r.r.r.r.r.r.r.r.",stabs:"x..x..x...x.x...",arp:2,arpV:.9,melody:NEON_CH,crash:1,fill:1},
+   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:2,arpV:.6,fill:1},
+   {name:"BUILD",bars:8,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r...r...r...r...",pad:1,arp:2,arpV:.7,riser:2},
+   {name:"CHORUS",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r...",arp:4,arpV:.5,melody:CANON_CH,crash:1,fill:1},
+   {name:"BREAK",bars:4,kick:"x...............",snare:"........x.......",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5,melody:[[[0,7,10]],[],[[0,4,10]],[]],down:1},
+   {name:"FINAL",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.6,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r...",arp:2,arpV:.8,melody:CANON_CH,crash:1,fill:1},
    {name:"OUTRO",bars:2,kick:"x...............",snare:"................",hatC:"................",bass:"r...............",pad:1,melody:[[[0,0,14]],[]],crash:1}
   ]},
- {id:"sakura",title:"SAKURA CIRCUIT",jp:"桜サーキット",bpm:142,hue:330,kit:"taiko",lead:"pluck",
-  root:62,leadRoot:74,scale:[0,2,5,7,9],prog:[0,4,2,3],stack:[0,1,2],
+ {id:"ode",title:"ODE TO JOY",jp:"歓喜の歌（ベートーヴェン）",bpm:132,hue:40,kit:"neon",lead:"saw",
+  root:60,leadRoot:72,scale:[0,2,4,5,7,9,11],prog:[0,4],stack:[0,2,4],
   sections:[
    {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.6},
-   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.x.",hatV:.45,bass:"r.....r.r.....r.",arp:2,arpV:.6,fill:1},
-   {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r.....r.r.....r.",pad:1,arp:2,arpV:.7,riser:2},
-   {name:"CHORUS",bars:8,kick:"x...x..xx...x..x",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r.o.",stabs:"..x...x...x...x.",arp:4,arpV:.5,melody:SAKURA_CH,crash:1,fill:1},
-   {name:"BREAK",bars:4,kick:"x.......x.......",snare:"........x.......",hatC:"..x...x...x...x.",hatV:.5,bass:"r.......",pad:1,arp:4,arpV:.4,melody:[[[0,5,8]],[],[[0,3,8]],[]],down:1},
-   {name:"FINAL",bars:8,kick:"x...x..xx...x..x",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.x.",hatV:.6,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r.o.",stabs:"..x...x...x...x.",arp:2,arpV:.8,melody:SAKURA_CH,crash:1,fill:1},
+   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.45,bass:"r.r.r.r.r.r.r.r.",arp:2,arpV:.6,fill:1},
+   {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r.r.r.r.r.r.r.r.",pad:1,arp:2,arpV:.7,riser:2},
+   {name:"CHORUS",bars:8,kick:"x...x...x...x..x",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r.r.r.r.r.r.r.r.",stabs:"..x...x...x...x.",arp:4,arpV:.5,melody:ODE_CH,crash:1,fill:1},
+   {name:"BREAK",bars:4,kick:"x.......x.......",snare:"........x.......",hatC:"..x...x...x...x.",hatV:.5,bass:"r.......",pad:1,arp:4,arpV:.4,melody:[[[0,4,8]],[],[[0,2,8]],[]],down:1},
+   {name:"FINAL",bars:8,kick:"x...x...x...x..x",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.6,hatO:"..x...x...x...x.",hatOV:.5,bass:"r.r.r.r.r.r.r.r.",stabs:"..x...x...x...x.",arp:2,arpV:.8,melody:ODE_CH,crash:1,fill:1},
    {name:"OUTRO",bars:2,kick:"x...............",snare:"................",hatC:"................",bass:"r...............",pad:1,melody:[[[0,0,14]],[]],crash:1}
   ]},
- {id:"hyper",title:"HYPER CORE",jp:"ハイパーコア",bpm:165,hue:130,kit:"hard",lead:"super",
-  root:52,leadRoot:76,scale:[0,2,3,5,7,8,10],prog:[0,5,2,6],stack:[0,2,4],
+ {id:"fate",title:"FATE",jp:"運命（ベートーヴェン）",bpm:165,hue:350,kit:"hard",lead:"super",
+  root:48,leadRoot:60,scale:[0,2,3,5,7,8,10],prog:[0,3,0,4],stack:[0,2,4],
   sections:[
    {name:"INTRO",bars:4,skip:2,kick:"x...x...x...x...",snare:"................",hatO:"..x...x...x...x.",hatOV:.6,bass:"r.......",pad:1,arp:4,arpV:.6},
-   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.x.",hatV:.35,hatO:"..x...x...x...x.",bass:"..r...r...r...r.",arp:2,arpV:.7,fill:1},
-   {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:SN_ROLL,hatO:"..x...x...x...x.",bass:"..r...r...r...r.",pad:1,arp:2,arpV:.7,riser:2},
-   {name:"CHORUS",bars:8,kick:"x...x...x...x.x.",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",bass:"..r...r...r...r.",stabs:"..x...x...x...x.",arp:4,arpV:.6,melody:HYPER_CH,crash:1,fill:1},
-   {name:"BREAK",bars:4,kick:"x...............",snare:"........x.......",hatO:"..x...x...x...x.",hatOV:.5,bass:"r.......",pad:1,melody:[[[0,7,8]],[],[[0,6,8]],[]],down:1},
-   {name:"FINAL",bars:8,kick:"x...x...x...x.x.",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.x.",hatV:.8,hatO:"..x...x...x...x.",bass:"..r...r...r...r.",stabs:"..x...x...x...x.",arp:2,arpV:.9,melody:HYPER_CH,crash:1,fill:1},
+   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.35,hatO:"..x...x...x...x.",hatOV:.5,bass:"..r...r...r...r.",arp:2,arpV:.7,fill:1},
+   {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:SN_ROLL,hatO:"..x...x...x...x.",hatOV:.6,bass:"..r...r...r...r.",pad:1,arp:2,arpV:.7,riser:2},
+   {name:"CHORUS",bars:8,kick:"x...x...x...x.x.",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"..r...r...r...r.",stabs:"..x...x...x...x.",arp:4,arpV:.6,melody:FATE_CH,crash:1,fill:1},
+   {name:"BREAK",bars:4,kick:"x...............",snare:"........x.......",hatO:"..x...x...x...x.",hatOV:.5,bass:"r.......",pad:1,melody:[[[0,4,10]],[],[[0,2,10]],[]],down:1},
+   {name:"FINAL",bars:8,kick:"x...x...x...x.x.",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.8,hatO:"..x...x...x...x.",hatOV:.5,bass:"..r...r...r...r.",stabs:"..x...x...x...x.",arp:2,arpV:.9,melody:FATE_CH,crash:1,fill:1},
    {name:"OUTRO",bars:2,kick:"x...............",snare:"................",hatC:"................",bass:"r...............",pad:1,melody:[[[0,0,14]],[]],crash:1}
   ]}
 ];
@@ -805,7 +805,7 @@ function sPreview(tr){if(!AC||cfg.muted)return;initAudio();resetSongBus();curKit
   bassN(t0,degToMidi(tr.root-24,tr.scale,tr.prog[0]),sd*6,.9);
   padN(t0,cm,sd*14,.9);
   [0,1,2,1].forEach((ix,i)=>arpN(t0+sd*2*i,cm[ix%cm.length]+12,1));
-  leadN(t0+sd*8,degToMidi(tr.leadRoot,tr.scale,tr.id==="sakura"?3:4),sd*6,.8,tr.lead);
+  leadN(t0+sd*8,degToMidi(tr.leadRoot,tr.scale,tr.id==="canon"?9:4),sd*6,.8,tr.lead);
   const n=AC.currentTime;songDry.gain.setValueAtTime(1,n);
   songDry.gain.setValueAtTime(1,n+sd*16);songDry.gain.linearRampToValueAtTime(0,n+sd*16+.4)}
 function sFanfare(clear){if(!AC||cfg.muted)return;const t0=AC.currentTime+.05,tr=curTrack();
@@ -882,15 +882,15 @@ function genChart(tr,diffKey){
 let juid=0;
 function jacket(tr){
   const u=tr.id+(juid++);
-  if(tr.id==="neon")return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b0b46"/><stop offset="1" stop-color="#060312"/></linearGradient><linearGradient id="b${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffbe2e"/><stop offset="1" stop-color="#ff2e8a"/></linearGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><circle cx="60" cy="52" r="30" fill="url(#b${u})"/><rect x="24" y="52" width="72" height="3" fill="#0e0626"/><rect x="24" y="59" width="72" height="4" fill="#0e0626"/><rect x="24" y="67" width="72" height="5" fill="#0e0626"/><g stroke="#00e5ff" stroke-width=".8" opacity=".75"><line x1="0" y1="80" x2="120" y2="80"/><line x1="0" y1="90" x2="120" y2="90"/><line x1="0" y1="103" x2="120" y2="103"/><line x1="0" y1="119" x2="120" y2="119"/><line x1="60" y1="80" x2="60" y2="120"/><line x1="44" y1="80" x2="20" y2="120"/><line x1="76" y1="80" x2="100" y2="120"/><line x1="28" y1="80" x2="-24" y2="120"/><line x1="92" y1="80" x2="144" y2="120"/></g><circle cx="22" cy="20" r="1.4" fill="#f2ecff"/><circle cx="98" cy="14" r="1" fill="#f2ecff"/><circle cx="86" cy="30" r="1.2" fill="#7ff3ff"/></svg>`;
-  if(tr.id==="sakura")return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#241040"/><stop offset="1" stop-color="#0e0626"/></linearGradient><radialGradient id="b${u}"><stop offset="0" stop-color="#ff9ec8"/><stop offset="1" stop-color="#ff2e8a"/></radialGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><circle cx="60" cy="58" r="42" fill="none" stroke="#ffbe2e" stroke-width="1" opacity=".6"/><circle cx="60" cy="58" r="34" fill="none" stroke="#8b8bff" stroke-width=".6" opacity=".5"/><g fill="url(#b${u})" opacity=".92"><ellipse cx="60" cy="38" rx="10" ry="16"/><ellipse cx="79" cy="52" rx="10" ry="16" transform="rotate(72 79 52)"/><ellipse cx="72" cy="75" rx="10" ry="16" transform="rotate(144 72 75)"/><ellipse cx="48" cy="75" rx="10" ry="16" transform="rotate(216 48 75)"/><ellipse cx="41" cy="52" rx="10" ry="16" transform="rotate(288 41 52)"/></g><circle cx="60" cy="58" r="7" fill="#ffbe2e"/><g fill="#ffbe2e"><circle cx="60" cy="47" r="1.3"/><circle cx="70" cy="55" r="1.3"/><circle cx="66" cy="66" r="1.3"/><circle cx="54" cy="66" r="1.3"/><circle cx="50" cy="55" r="1.3"/></g><path d="M8 112 Q40 96 58 92" stroke="#4a2a70" stroke-width="2.4" fill="none"/><circle cx="97" cy="22" r="1.4" fill="#7ff3ff"/><circle cx="18" cy="26" r="1" fill="#f2ecff"/></svg>`;
-  return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a2416"/><stop offset="1" stop-color="#060312"/></linearGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><g fill="none" stroke-width="1.2"><polygon points="60,10 103,35 103,85 60,110 17,85 17,35" stroke="#8dff3a" opacity=".9"/><polygon points="60,24 91,42 91,78 60,96 29,78 29,42" stroke="#00e5ff" opacity=".7"/><polygon points="60,38 79,49 79,71 60,82 41,71 41,49" stroke="#8dff3a" opacity=".5"/><polygon points="60,50 69,55 69,65 60,70 51,65 51,55" stroke="#00e5ff" opacity=".4"/></g><polygon points="66,34 48,62 58,62 52,88 74,56 62,56 70,34" fill="#ffbe2e"/><g stroke="#8dff3a" stroke-width="1" opacity=".5"><line x1="4" y1="18" x2="24" y2="18"/><line x1="2" y1="26" x2="16" y2="26"/><line x1="96" y1="98" x2="118" y2="98"/><line x1="104" y1="106" x2="118" y2="106"/></g></svg>`;
+  if(tr.id==="canon")return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2e22"/><stop offset="1" stop-color="#060312"/></linearGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><g fill="none"><circle cx="60" cy="60" r="44" stroke="#ffbe2e" stroke-width="1" opacity=".45"/><circle cx="60" cy="60" r="35" stroke="#7ff3ff" stroke-width=".8" opacity=".55"/><circle cx="60" cy="60" r="26" stroke="#ffbe2e" stroke-width="1" opacity=".75"/><circle cx="60" cy="60" r="17" stroke="#7ff3ff" stroke-width=".8" opacity=".8"/></g><circle cx="60" cy="60" r="6" fill="#ffbe2e"/><g fill="#ffbe2e"><circle cx="60" cy="16" r="1.6"/><circle cx="91" cy="38" r="1.6"/><circle cx="95" cy="69" r="1.6"/><circle cx="60" cy="104" r="1.6" fill="#7ff3ff"/><circle cx="25" cy="69" r="1.6" fill="#7ff3ff"/><circle cx="29" cy="38" r="1.6"/></g><g stroke="#f2ecff" stroke-width=".7" opacity=".35"><line x1="10" y1="98" x2="110" y2="98"/><line x1="10" y1="104" x2="110" y2="104"/><line x1="10" y1="110" x2="110" y2="110"/></g></svg>`;
+  if(tr.id==="ode")return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#12264d"/><stop offset="1" stop-color="#060312"/></linearGradient><radialGradient id="b${u}"><stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#ffbe2e"/></radialGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><g stroke="#ffbe2e" stroke-width="2" opacity=".85"><line x1="60" y1="6" x2="60" y2="22"/><line x1="60" y1="98" x2="60" y2="114"/><line x1="6" y1="60" x2="22" y2="60"/><line x1="98" y1="60" x2="114" y2="60"/><line x1="22" y1="22" x2="33" y2="33"/><line x1="87" y1="87" x2="98" y2="98"/><line x1="98" y1="22" x2="87" y2="33"/><line x1="33" y1="87" x2="22" y2="98"/></g><circle cx="60" cy="60" r="24" fill="url(#b${u})"/><circle cx="60" cy="60" r="31" fill="none" stroke="#f2ecff" stroke-width=".8" opacity=".5"/><circle cx="24" cy="18" r="1.2" fill="#f2ecff"/><circle cx="100" cy="30" r="1" fill="#f2ecff"/><circle cx="90" cy="104" r="1.2" fill="#7ff3ff"/></svg>`;
+  return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b0710"/><stop offset="1" stop-color="#060312"/></linearGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><circle cx="60" cy="60" r="46" fill="none" stroke="#ff3b4d" stroke-width="1" opacity=".5"/><circle cx="60" cy="60" r="38" fill="none" stroke="#f2ecff" stroke-width=".6" opacity=".3"/><g fill="#ff3b4d"><rect x="30" y="38" width="8" height="30" rx="2"/><rect x="46" y="38" width="8" height="30" rx="2"/><rect x="62" y="38" width="8" height="30" rx="2"/><rect x="78" y="52" width="24" height="8" rx="2"/></g><g fill="#ffbe2e"><circle cx="34" cy="82" r="1.6"/><circle cx="50" cy="82" r="1.6"/><circle cx="66" cy="82" r="1.6"/><rect x="78" y="80" width="24" height="3" rx="1.5"/></g><circle cx="18" cy="18" r="1.1" fill="#f2ecff"/><circle cx="103" cy="100" r="1.1" fill="#f2ecff"/></svg>`;
 }
 
 /* ================= game state ================= */
 const app=$("app"),stage=$("stage"),cv=$("cv"),ctx=cv.getContext("2d");
 let state="title",prevState="play";
-let curTrackId=cfg.track;if(!TRACKS.find(t=>t.id===curTrackId))curTrackId="neon";
+let curTrackId=cfg.track;if(!TRACKS.find(t=>t.id===curTrackId))curTrackId=TRACKS[0].id;
 const curTrack=()=>TRACKS.find(t=>t.id===curTrackId);
 let chart=[],spawnIdx=0,active=[],bullets=[],particles=[],rings=[],popups=[],barriers=[];
 let stats={perfect:0,great:0,good:0,miss:0};

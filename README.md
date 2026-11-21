@@ -2,10 +2,10 @@
 
 7レーンのリズム×シューティングゲーム。タップでレーン移動＆射撃、流れてくる敵をビートに合わせて撃ち落とす。
 
-- 収録曲（Web Audio生成、外部音源ファイルなし）
-  - NEON RUNNER（128 BPM）
-  - SAKURA CIRCUIT（142 BPM）
-  - HYPER CORE（165 BPM）
+- 収録曲（パブリックドメインのクラシックをWeb Audioで演奏、外部音源ファイルなし）
+  - CANON（パッヘルベルのカノン、120 BPM）
+  - ODE TO JOY（ベートーヴェン「歓喜の歌」、132 BPM）
+  - FATE（ベートーヴェン交響曲第5番「運命」、165 BPM）
 - PERFECT／GREAT／GOOD／MISS判定、コンボ、全8ウェーブ
 
 ## プレイ
