@@ -344,7 +344,7 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
             </div>
             <div class="how">
               <svg viewBox="0 0 24 24" fill="none" stroke="#ff2e8a" stroke-width="1.6"><circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="#00e5ff"/><circle cx="12" cy="12" r="1.6" fill="#ffbe2e" stroke="none"/></svg>
-              <div><b>SHOOT ON THE LINE</b><p>敵は同じレーンで撃つ（LOCK ONが目印）。中型はウラ拍・3連符、大型は拍アタマの瞬間だけ効く。水色の敵はレーンを合わせて長押しビームで削れ</p></div>
+              <div><b>SHOOT ON THE LINE</b><p>敵は同じレーンで撃つ（LOCK ONが目印）。中型は表拍→裏拍（3連符の敵もいる）、大型は拍アタマの瞬間だけ効く。水色の敵はレーンを合わせて長押しビームで削れ</p></div>
             </div>
             <div class="how">
               <svg viewBox="0 0 24 24" fill="none" stroke="#ffbe2e" stroke-width="1.6"><path d="M13 2 5 13h5l-2 9 9-12h-5l1-8z" fill="rgba(255,190,46,.2)"/></svg>
@@ -844,12 +844,12 @@ function raidGate(r,t){
   const tr=curTrack(),ph=t/tr.slotDur;
   let P,O,HW;
   if(r.kind==="heavy"){P=4;O=0;HW=.8}
-  else if(r.maxHp>=3){P=4/3;O=0;HW=.5}
-  else{P=4;O=2;HW=.7}
+  else if(r.maxHp>=3){P=4;O=(r.maxHp-r.hp)%3*(4/3);HW=.5}
+  else{P=4;O=(r.maxHp-r.hp)===0?0:2;HW=.7}
   const m=((ph-O)%P+P)%P,dist=Math.min(m,P-m),nx=(P-m)%P;
   return{open:dist<=HW,frac:nx/P,next:nx*tr.slotDur};
 }
-const RAID_LABEL=r=>r.kind==="hold"?"長押しビーム":r.kind==="heavy"?"拍アタマ":r.kind==="mid"?(r.maxHp>=3?"3連符":"ウラ拍"):"";
+const RAID_LABEL=r=>r.kind==="hold"?"長押しビーム":r.kind==="heavy"?"拍アタマ":r.kind==="mid"?(r.maxHp>=3?"3連符":(r.maxHp-r.hp)===0?"表拍":"ウラ拍"):"";
 function killRaider(r){
   const t=clock(),x=laneX(r.lane),y=raiderY(r,t),h=RAID_HUE[r.kind];
   r.dead=true;
@@ -872,7 +872,7 @@ function hitRaider(r,b){
     r.shieldFlash=1;
     spawnParticles(b.x,b.y,210,7,150);
     if(!demoMode()&&t-r.lastHint>1.2){r.lastHint=t;
-      popup(b.x,b.y-12,"BLOCKED",COL.mut,11,r.kind==="heavy"?"拍アタマで撃て":r.maxHp>=3?"3連符のリズムで撃て":"ウラ拍で撃て")}
+      popup(b.x,b.y-12,"BLOCKED",COL.mut,11,r.kind==="heavy"?"拍アタマで撃て":r.maxHp>=3?"3連符のリズムで撃て":(r.maxHp-r.hp)===0?"表拍で撃て":"ウラ拍で撃て")}
     return;
   }
   r.hp--;r.flash=1;
