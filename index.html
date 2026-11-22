@@ -344,7 +344,7 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
             </div>
             <div class="how">
               <svg viewBox="0 0 24 24" fill="none" stroke="#ff2e8a" stroke-width="1.6"><circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="#00e5ff"/><circle cx="12" cy="12" r="1.6" fill="#ffbe2e" stroke="none"/></svg>
-              <div><b>SHOOT ON THE LINE</b><p>レーンを降りてくる敵は、同じレーンに自機を合わせて連打すると当たる（LOCK ON表示が目印）。中型は2〜3発、大型は5〜6発で撃破。敵弾は避けるか撃ち落とせ</p></div>
+              <div><b>SHOOT ON THE LINE</b><p>敵は同じレーンで撃つ（LOCK ONが目印）。中型はウラ拍・3連符、大型は拍アタマの瞬間だけ効く。水色の敵はレーンを合わせて長押しビームで削れ</p></div>
             </div>
             <div class="how">
               <svg viewBox="0 0 24 24" fill="none" stroke="#ffbe2e" stroke-width="1.6"><path d="M13 2 5 13h5l-2 9 9-12h-5l1-8z" fill="rgba(255,190,46,.2)"/></svg>
@@ -824,35 +824,61 @@ function genRaiders(tr,diffKey){
     let lane=Math.floor(rng()*7);
     if(lane===lastLane)lane=(lane+1+Math.floor(rng()*6))%7;
     lastLane=lane;
-    const hp=kind==="heavy"?(diffKey==="hard"?6:5):kind==="mid"?(diffKey==="hard"?3:2):1;
+    const hp=kind==="heavy"?(diffKey==="hard"?6:5):kind==="mid"?(diffKey==="hard"?3:2):kind==="hold"?100:1;
     plan.push({t:(sec.start+bar)*tr.barSec+tr.barSec*.5,lane,kind,
-      hp,travel:kind==="heavy"?16:kind==="mid"?13:11.5,fireInt:kind==="heavy"?2.3:kind==="mid"?2.6:2.9});
+      hp,travel:kind==="heavy"?16:kind==="mid"?13:kind==="hold"?17:11.5,fireInt:kind==="heavy"?2.3:kind==="mid"?2.6:2.9});
   };
   tr.sections.forEach(sec=>{
     if(sec.name==="VERSE"){if(diffKey!=="easy")push(sec,5,"mid")}
     else if(sec.name==="CHORUS"){if(diffKey==="easy")push(sec,3,"mid");
-      else{push(sec,1,"norm");push(sec,5,"mid")}}
-    else if(sec.name==="FINAL"){if(diffKey==="easy")push(sec,3,"mid");
+      else{push(sec,1,"norm");push(sec,5,"hold")}}
+    else if(sec.name==="FINAL"){if(diffKey==="easy")push(sec,3,"hold");
       else if(diffKey==="normal"){push(sec,1,"mid");push(sec,5,"heavy")}
-      else{push(sec,1,"mid");push(sec,3,"heavy");push(sec,5,"mid")}}
+      else{push(sec,1,"mid");push(sec,3,"heavy");push(sec,5,"hold")}}
   });
   return plan.sort((a,b)=>a.t-b.t);
 }
 const raiderY=(r,t)=>M.spawnY+(M.judgeY-M.spawnY)*clamp((t-r.t0)/r.travel,0,1);
-const RAID_HUE={norm:350,mid:28,heavy:265};
-function hitRaider(r,b){
-  r.hp--;r.flash=1;
+const RAID_HUE={norm:350,mid:28,heavy:265,hold:190};
+function raidGate(r,t){
+  const tr=curTrack(),ph=t/tr.slotDur;
+  let P,O,HW;
+  if(r.kind==="heavy"){P=4;O=0;HW=.8}
+  else if(r.maxHp>=3){P=4/3;O=0;HW=.5}
+  else{P=4;O=2;HW=.7}
+  const m=((ph-O)%P+P)%P,dist=Math.min(m,P-m),nx=(P-m)%P;
+  return{open:dist<=HW,frac:nx/P,next:nx*tr.slotDur};
+}
+const RAID_LABEL=r=>r.kind==="hold"?"長押しビーム":r.kind==="heavy"?"拍アタマ":r.kind==="mid"?(r.maxHp>=3?"3連符":"ウラ拍"):"";
+function killRaider(r){
   const t=clock(),x=laneX(r.lane),y=raiderY(r,t),h=RAID_HUE[r.kind];
+  r.dead=true;
+  sHit("perfect",r.lane);
+  spawnParticles(x,y,h,r.kind==="heavy"?36:r.kind==="norm"?20:28,r.kind==="heavy"?380:300);
+  rings.push({x,y,age:0,life:.5,r0:8,r1:r.r*2.4,h,w:3});
+  shake=Math.max(shake,RM?0:r.kind==="heavy"?7:4);
+  if(!demoMode()){raidKills++;
+    const pts=(r.kind==="heavy"?3000:r.kind==="hold"?2500:r.kind==="mid"?1500:800)*(fever?2:1);score+=pts;
+    popup(x,y,"DOWN! +"+pts,COL.amber,17,r.kind==="heavy"?"大型敵 撃破":r.kind==="hold"?"ビーム敵 撃破":r.kind==="mid"?"中型敵 撃破":"敵 撃破")}
+}
+function hitRaider(r,b){
+  const t=clock(),x=laneX(r.lane),y=raiderY(r,t),h=RAID_HUE[r.kind];
+  if(r.kind==="hold"){
+    spawnParticles(b.x,b.y,200,6,140);
+    if(!demoMode()&&t-r.lastHint>1.5){r.lastHint=t;popup(x,y-r.r-16,"ビームで削れ!",COL.cyan,12,"レーンを合わせて長押し")}
+    return;
+  }
+  if(r.kind!=="norm"&&!raidGate(r,t).open){
+    r.shieldFlash=1;
+    spawnParticles(b.x,b.y,210,7,150);
+    if(!demoMode()&&t-r.lastHint>1.2){r.lastHint=t;
+      popup(b.x,b.y-12,"BLOCKED",COL.mut,11,r.kind==="heavy"?"拍アタマで撃て":r.maxHp>=3?"3連符のリズムで撃て":"ウラ拍で撃て")}
+    return;
+  }
+  r.hp--;r.flash=1;
   spawnParticles(b.x,b.y,h,10,240);
-  if(r.hp<=0){
-    r.dead=true;
-    sHit("perfect",r.lane);
-    spawnParticles(x,y,h,r.kind==="heavy"?36:r.kind==="mid"?28:20,r.kind==="heavy"?380:300);
-    rings.push({x,y,age:0,life:.5,r0:8,r1:r.r*2.4,h,w:3});
-    shake=Math.max(shake,RM?0:r.kind==="heavy"?7:4);
-    if(!demoMode()){raidKills++;const pts=(r.kind==="heavy"?3000:r.kind==="mid"?1500:800)*(fever?2:1);score+=pts;
-      popup(x,y,"DOWN! +"+pts,COL.amber,17,r.kind==="heavy"?"大型敵 撃破":r.kind==="mid"?"中型敵 撃破":"敵 撃破")}
-  }else{
+  if(r.hp<=0)killRaider(r);
+  else{
     sHit("great",r.lane);
     if(!demoMode())popup(x,y-r.r-16,"あと"+r.hp+"発",COL.ink,12,null);
   }
@@ -861,7 +887,7 @@ function crashRaider(r,demo){
   const x=laneX(r.lane);
   spawnParticles(x,M.judgeY,RAID_HUE[r.kind],20,300);
   barriers.push({lane:r.lane,age:0});
-  if(!demo){hp=Math.max(0,hp-(r.kind==="heavy"?20:r.kind==="mid"?14:10));dmgFlash=1;shake=Math.max(shake,RM?0:7);
+  if(!demo){hp=Math.max(0,hp-(r.kind==="heavy"?20:r.kind==="hold"?16:r.kind==="mid"?14:10));dmgFlash=1;shake=Math.max(shake,RM?0:7);
     popup(x,M.judgeY-30,"BREACH!",COL.miss,18,"敵がラインを突破");sMiss()}
 }
 
@@ -943,6 +969,7 @@ let curTrackId=cfg.track;if(!TRACKS.find(t=>t.id===curTrackId))curTrackId=TRACKS
 const curTrack=()=>TRACKS.find(t=>t.id===curTrackId);
 let chart=[],spawnIdx=0,active=[],bullets=[],particles=[],rings=[],popups=[],barriers=[];
 let raiders=[],eshots=[],raidPlan=[],raidIdx=0,raidKills=0,lastAiRaid=-9;
+let holding=false,beamR=null;
 let stats={perfect:0,great:0,good:0,miss:0};
 let score=0,combo=0,maxCombo=0,hp=100,heat=0,jammed=false,fever=false;
 let ending=false,endAt=0,cleared=false,earlyHints=0;
@@ -1043,7 +1070,7 @@ function tap(lane,ai,aiNote){
     off=bo;
   }else off=(Math.random()-.5)*.04;
   if(target)target.locked=true;
-  bullets.push({x:ship.x,y:M.shipY-16,lane,target,off,dead:false});
+  bullets.push({x:laneX(lane),y:M.shipY-16,lane,target,off,dead:false});
   muzzle=.07;sShot(lane);
 }
 function addHeat(v){
@@ -1152,16 +1179,29 @@ function updateGame(t,dt){
   while(raidIdx<raidPlan.length&&raidPlan[raidIdx].t<=t){
     const rp=raidPlan[raidIdx++];
     raiders.push({lane:rp.lane,hp:rp.hp,maxHp:rp.hp,kind:rp.kind,travel:rp.travel,fireInt:rp.fireInt,
-      t0:t,r:rp.kind==="heavy"?M.er*2.05:rp.kind==="mid"?M.er*1.8:M.er*1.5,flash:0,nextFire:t+1.6,dead:false});
+      t0:t,r:rp.kind==="heavy"?M.er*2.05:rp.kind==="hold"?M.er*1.9:rp.kind==="mid"?M.er*1.8:M.er*1.5,
+      flash:0,shieldFlash:0,lastHint:-9,nextFire:rp.kind==="hold"?t+1e9:t+1.6,dead:false});
   }
   for(const r of raiders){
     if(r.dead)continue;
     r.flash=Math.max(0,r.flash-dt*5);
+    r.shieldFlash=Math.max(0,(r.shieldFlash||0)-dt*4);
     if((t-r.t0)/r.travel>=1){r.dead=true;crashRaider(r,demo);continue}
     if(t>=r.nextFire){r.nextFire=t+r.fireInt;
       eshots.push({lane:r.lane,y:raiderY(r,t)+r.r*.6,vy:H*.5,dead:false});sShot(r.lane)}
   }
   raiders=raiders.filter(r=>!r.dead);
+  beamR=null;
+  {
+    let cand=null;
+    for(const r of raiders)if(r.kind==="hold"&&r.lane===ship.lane&&(!cand||raiderY(r,t)>raiderY(cand,t)))cand=r;
+    if(cand&&(demo||holding)){
+      beamR=cand;cand.flash=Math.min(1,cand.flash+dt*2);
+      cand.hp-=dt*(demo?42:58);
+      if(Math.random()<.6)spawnParticles(laneX(cand.lane)+(Math.random()*10-5),raiderY(cand,t)+cand.r*.3,190,2,170);
+      if(cand.hp<=0)killRaider(cand);
+    }
+  }
   for(const e of eshots){
     if(e.dead)continue;
     e.y+=e.vy*dt;
@@ -1356,6 +1396,20 @@ function render(t){
     ctx.restore();
     ctx.fillStyle=r.flash>0?"#ffffff":hs(h,100,82,.95);
     ctx.beginPath();ctx.arc(x,y,R*.2+beatPulse*1.5,0,TAU);ctx.fill();
+    if(r.kind==="mid"||r.kind==="heavy"){
+      const g=raidGate(r,t);
+      if(g.open){
+        ctx.save();ctx.strokeStyle=hs(h,100,82,.9);ctx.lineWidth=2;
+        ctx.beginPath();ctx.arc(x,y,R*1.14,0,TAU);ctx.stroke();ctx.restore();
+      }else{
+        ctx.save();ctx.strokeStyle=hs(h,100,76,.3+.55*(1-g.frac));ctx.lineWidth=1.6;
+        ctx.beginPath();ctx.arc(x,y,R*(1.05+1.15*g.frac),0,TAU);ctx.stroke();
+        ctx.strokeStyle=`rgba(170,200,255,${.45+.3*Math.sin(t*6)})`;ctx.lineWidth=1.4;ctx.setLineDash([5,5]);
+        ctx.beginPath();ctx.arc(x,y,R*1.0,0,TAU);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+      }
+      if(r.shieldFlash>0){ctx.save();ctx.strokeStyle=`rgba(200,225,255,${r.shieldFlash*.9})`;ctx.lineWidth=2.5;
+        ctx.beginPath();ctx.arc(x,y,R*1.14,0,TAU);ctx.stroke();ctx.restore()}
+    }
     if(locked){
       const rr2=R+9+Math.sin(t*10)*1.5,L2=9;
       ctx.save();ctx.strokeStyle=hs(h,100,76,.95);ctx.lineWidth=2;
@@ -1369,8 +1423,11 @@ function render(t){
     ctx.fillStyle="rgba(10,8,24,.65)";rr(bx-1,by-1,bw+2,7,3);ctx.fill();
     if(r.hp>0){ctx.fillStyle=hs(h,100,62,.95);rr(bx,by,Math.max(3,bw*r.hp/r.maxHp),5,2.5);ctx.fill()}
     ctx.strokeStyle=hs(h,100,80,.8);ctx.lineWidth=1;rr(bx-1,by-1,bw+2,7,3);ctx.stroke();
-    if(r.maxHp>=2){ctx.font="700 10px 'Chakra Petch',sans-serif";ctx.textAlign="left";
+    if(r.maxHp>=2&&r.kind!=="hold"){ctx.font="700 10px 'Chakra Petch',sans-serif";ctx.textAlign="left";
       ctx.fillStyle=hs(h,100,84,.95);ctx.fillText("x"+r.hp,bx+bw+5,by+6)}
+    const lb=RAID_LABEL(r);
+    if(lb){ctx.font="700 9.5px 'Chakra Petch',sans-serif";ctx.textAlign="center";
+      ctx.fillStyle=hs(h,100,82,.85);ctx.fillText(lb,x,y+R+16)}
   }
   // judgment line
   const jg=ctx.createLinearGradient(M.side,0,W-M.side,0);
@@ -1416,6 +1473,20 @@ function render(t){
     ctx.fillStyle=tg2;rr(x-2,e.y-24,4,24,2);ctx.fill();
     ctx.fillStyle="#ff3b4d";ctx.beginPath();ctx.arc(x,e.y,4.4,0,TAU);ctx.fill();
     ctx.fillStyle="#ffd7dc";ctx.beginPath();ctx.arc(x,e.y,2,0,TAU);ctx.fill();
+    ctx.restore();
+  }
+  // beam (hold-type enemies)
+  if(beamR&&!beamR.dead){
+    const bx2=laneX(beamR.lane),by2=raiderY(beamR,t)+beamR.r*.35,sx2=ship.x,sy2=M.shipY-16;
+    ctx.save();ctx.globalCompositeOperation="lighter";
+    const fl=.8+Math.random()*.35;
+    ctx.strokeStyle=`rgba(64,200,255,${.22*fl})`;ctx.lineWidth=11;
+    ctx.beginPath();ctx.moveTo(sx2,sy2);ctx.lineTo(bx2,by2);ctx.stroke();
+    ctx.strokeStyle=`rgba(140,230,255,${.75*fl})`;ctx.lineWidth=4.5;
+    ctx.beginPath();ctx.moveTo(sx2,sy2);ctx.lineTo(bx2,by2);ctx.stroke();
+    ctx.strokeStyle="rgba(255,255,255,.95)";ctx.lineWidth=1.8;
+    ctx.beginPath();ctx.moveTo(sx2,sy2);ctx.lineTo(bx2,by2);ctx.stroke();
+    drawGlow(bx2,by2,26,190,.7*fl);
     ctx.restore();
   }
   // ship
@@ -1710,6 +1781,9 @@ function setMuted(m){
 /* ================= input ================= */
 const KEYMAP={KeyA:0,KeyS:1,KeyD:2,KeyF:3,KeyJ:4,KeyK:5,KeyL:6,
   Digit1:0,Digit2:1,Digit3:2,Digit4:3,Digit5:4,Digit6:5,Digit7:6};
+const heldKeys=new Set(),heldPtrs=new Set();
+const syncHold=()=>{holding=heldKeys.size>0||heldPtrs.size>0};
+function moveShip(lane){if(ship.lane!==lane)ship.lane=lane;ship.tx=laneX(lane)}
 window.addEventListener("keydown",e=>{
   if(e.repeat)return;
   const c=e.code;
@@ -1731,20 +1805,26 @@ window.addEventListener("keydown",e=>{
     e.preventDefault();return;
   }
   if(KEYMAP[c]!==undefined&&(state==="play"||state==="countdown")){
+    heldKeys.add(c);syncHold();
     initAudio();tap(KEYMAP[c]);e.preventDefault();
   }
 });
+window.addEventListener("keyup",e=>{if(heldKeys.delete(e.code))syncHold()});
 cv.addEventListener("pointerdown",e=>{
   if(!(state==="play"||state==="countdown"))return;
   e.preventDefault();
+  heldPtrs.add(e.pointerId);syncHold();
   const r=cv.getBoundingClientRect(),x=e.clientX-r.left;
   const lane=clamp(Math.floor((x-M.side)/(M.laneW+M.gap)),0,6);
   initAudio();tap(lane);
 });
+window.addEventListener("pointerup",e=>{if(heldPtrs.delete(e.pointerId))syncHold()});
+window.addEventListener("pointercancel",e=>{if(heldPtrs.delete(e.pointerId))syncHold()});
 cv.addEventListener("pointermove",e=>{
-  if(e.pointerType!=="mouse")return;
   const r=cv.getBoundingClientRect(),x=e.clientX-r.left;
-  hoverLane=(state==="play"||state==="countdown")?clamp(Math.floor((x-M.side)/(M.laneW+M.gap)),0,6):-1;
+  const lane=clamp(Math.floor((x-M.side)/(M.laneW+M.gap)),0,6);
+  if(e.pointerType==="mouse")hoverLane=(state==="play"||state==="countdown")?lane:-1;
+  if((heldPtrs.has(e.pointerId)||(e.pointerType==="mouse"&&e.buttons>0))&&(state==="play"||state==="countdown"))moveShip(lane);
 });
 cv.addEventListener("pointerleave",()=>hoverLane=-1);
 cv.addEventListener("contextmenu",e=>e.preventDefault());
