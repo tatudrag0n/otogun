@@ -344,7 +344,7 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
             </div>
             <div class="how">
               <svg viewBox="0 0 24 24" fill="none" stroke="#ff2e8a" stroke-width="1.6"><circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="#00e5ff"/><circle cx="12" cy="12" r="1.6" fill="#ffbe2e" stroke="none"/></svg>
-              <div><b>SHOOT ON THE LINE</b><p>敵が判定ラインに入る瞬間を狙って撃ち落とす。大型の敵は複数発ヒットで撃破、敵弾は避けるか撃ち落とせ</p></div>
+              <div><b>SHOOT ON THE LINE</b><p>レーンを降りてくる敵は、同じレーンに自機を合わせて連打すると当たる（LOCK ON表示が目印）。中型は2〜3発、大型は5〜6発で撃破。敵弾は避けるか撃ち落とせ</p></div>
             </div>
             <div class="how">
               <svg viewBox="0 0 24 24" fill="none" stroke="#ffbe2e" stroke-width="1.6"><path d="M13 2 5 13h5l-2 9 9-12h-5l1-8z" fill="rgba(255,190,46,.2)"/></svg>
@@ -503,8 +503,8 @@ const TRACKS=[
   root:50,leadRoot:62,scale:[0,2,4,5,7,9,11],prog:[0,4,5,2,3,0,3,4],stack:[0,2,4],
   sections:[
    {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5},
-   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:2,arpV:.6,fill:1},
-   {name:"BUILD",bars:8,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r...r...r...r...",pad:1,arp:2,arpV:.7,riser:2},
+   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.45,melody:CANON_CH,fill:1},
+   {name:"BUILD",bars:8,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r...r...r...r...",pad:1,arp:2,arpV:.7,melody:CANON_CH,riser:2},
    {name:"CHORUS",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r...",arp:4,arpV:.5,melody:CANON_CH,crash:1,fill:1},
    {name:"BREAK",bars:4,kick:"x...............",snare:"........x.......",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5,melody:[[[0,7,10]],[],[[0,4,10]],[]],down:1},
    {name:"FINAL",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.6,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r...",arp:2,arpV:.8,melody:CANON_CH,crash:1,fill:1},
@@ -514,8 +514,8 @@ const TRACKS=[
   root:60,leadRoot:72,scale:[0,2,4,5,7,9,11],prog:[0,4],stack:[0,2,4],
   sections:[
    {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.6},
-   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.45,bass:"r.r.r.r.r.r.r.r.",arp:2,arpV:.6,fill:1},
-   {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r.r.r.r.r.r.r.r.",pad:1,arp:2,arpV:.7,riser:2},
+   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.45,bass:"r.r.r.r.r.r.r.r.",arp:4,arpV:.45,melody:ODE_CH,fill:1},
+   {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r.r.r.r.r.r.r.r.",pad:1,arp:2,arpV:.7,melody:ODE_CH,riser:2},
    {name:"CHORUS",bars:8,kick:"x...x...x...x..x",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r.r.r.r.r.r.r.r.",stabs:"..x...x...x...x.",arp:4,arpV:.5,melody:ODE_CH,crash:1,fill:1},
    {name:"BREAK",bars:4,kick:"x.......x.......",snare:"........x.......",hatC:"..x...x...x...x.",hatV:.5,bass:"r.......",pad:1,arp:4,arpV:.4,melody:[[[0,4,8]],[],[[0,2,8]],[]],down:1},
    {name:"FINAL",bars:8,kick:"x...x...x...x..x",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.6,hatO:"..x...x...x...x.",hatOV:.5,bass:"r.r.r.r.r.r.r.r.",stabs:"..x...x...x...x.",arp:2,arpV:.8,melody:ODE_CH,crash:1,fill:1},
@@ -525,8 +525,8 @@ const TRACKS=[
   root:48,leadRoot:60,scale:[0,2,3,5,7,8,10],prog:[0,3,0,4],stack:[0,2,4],
   sections:[
    {name:"INTRO",bars:4,skip:2,kick:"x...x...x...x...",snare:"................",hatO:"..x...x...x...x.",hatOV:.6,bass:"r.......",pad:1,arp:4,arpV:.6},
-   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.35,hatO:"..x...x...x...x.",hatOV:.5,bass:"..r...r...r...r.",arp:2,arpV:.7,fill:1},
-   {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:SN_ROLL,hatO:"..x...x...x...x.",hatOV:.6,bass:"..r...r...r...r.",pad:1,arp:2,arpV:.7,riser:2},
+   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.35,hatO:"..x...x...x...x.",hatOV:.5,bass:"..r...r...r...r.",arp:4,arpV:.5,melody:FATE_CH,fill:1},
+   {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:SN_ROLL,hatO:"..x...x...x...x.",hatOV:.6,bass:"..r...r...r...r.",pad:1,arp:2,arpV:.7,melody:FATE_CH,riser:2},
    {name:"CHORUS",bars:8,kick:"x...x...x...x.x.",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"..r...r...r...r.",stabs:"..x...x...x...x.",arp:4,arpV:.6,melody:FATE_CH,crash:1,fill:1},
    {name:"BREAK",bars:4,kick:"x...............",snare:"........x.......",hatO:"..x...x...x...x.",hatOV:.5,bass:"r.......",pad:1,melody:[[[0,4,10]],[],[[0,2,10]],[]],down:1},
    {name:"FINAL",bars:8,kick:"x...x...x...x.x.",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.8,hatO:"..x...x...x...x.",hatOV:.5,bass:"..r...r...r...r.",stabs:"..x...x...x...x.",arp:2,arpV:.9,melody:FATE_CH,crash:1,fill:1},
@@ -1325,9 +1325,20 @@ function render(t){
     }
   }
   ctx.restore(); // clip
+  // raider spawn warnings (1 second ahead)
+  for(let i=raidIdx;i<raidPlan.length;i++){const rp=raidPlan[i],dtw=rp.t-t;
+    if(dtw>1)break; if(dtw<=0)continue;
+    const wx2=laneX(rp.lane),wy2=M.spawnY+58,pu=.6+.4*Math.sin(t*16);
+    ctx.save();ctx.fillStyle=hs(RAID_HUE[rp.kind],100,66,.5+.5*pu);
+    ctx.beginPath();ctx.moveTo(wx2,wy2+9);ctx.lineTo(wx2-7,wy2-5);ctx.lineTo(wx2+7,wy2-5);ctx.closePath();ctx.fill();
+    ctx.font="700 9px 'Chakra Petch',sans-serif";ctx.textAlign="center";
+    ctx.fillText("WARNING",wx2,wy2-10);ctx.restore()}
   // raiders (multi-hit enemies)
   for(const r of raiders){
     const y=raiderY(r,t),wx=laneX(r.lane)+Math.sin(t*2+r.lane*1.7)*2,x=wx,h=RAID_HUE[r.kind],R=r.r;
+    const locked=ship.lane===r.lane;
+    ctx.save();ctx.fillStyle=hs(h,90,60,locked?.12:.045);
+    ctx.fillRect(laneX(r.lane)-M.laneW/2,M.top,M.laneW,M.judgeY-M.top);ctx.restore();
     const tele=r.nextFire-t<.5&&r.nextFire-t>0;
     if(tele){ctx.save();ctx.strokeStyle=`rgba(255,59,77,${.22+.3*Math.abs(Math.sin(t*14))})`;
       ctx.setLineDash([4,7]);ctx.lineWidth=1.2;
@@ -1345,9 +1356,21 @@ function render(t){
     ctx.restore();
     ctx.fillStyle=r.flash>0?"#ffffff":hs(h,100,82,.95);
     ctx.beginPath();ctx.arc(x,y,R*.2+beatPulse*1.5,0,TAU);ctx.fill();
-    const pw=Math.min(10,R*1.8/r.maxHp),tw=pw*r.maxHp+(r.maxHp-1)*2;
-    for(let i=0;i<r.maxHp;i++){ctx.fillStyle=i<r.hp?hs(h,100,68,.95):"rgba(120,110,160,.35)";
-      rr(x-tw/2+i*(pw+2),y-R-13,pw,4.5,2);ctx.fill()}
+    if(locked){
+      const rr2=R+9+Math.sin(t*10)*1.5,L2=9;
+      ctx.save();ctx.strokeStyle=hs(h,100,76,.95);ctx.lineWidth=2;
+      [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([sx,sy])=>{
+        ctx.beginPath();ctx.moveTo(x+sx*rr2,y+sy*rr2-sy*L2);ctx.lineTo(x+sx*rr2,y+sy*rr2);ctx.lineTo(x+sx*rr2-sx*L2,y+sy*rr2);ctx.stroke()});
+      ctx.font="700 10px 'Chakra Petch',sans-serif";ctx.textAlign="center";
+      ctx.fillStyle=hs(h,100,82,.95);ctx.fillText("LOCK ON",x,y-R-26);
+      ctx.restore();
+    }
+    const bw=R*1.9,bx=x-bw/2,by=y-R-14;
+    ctx.fillStyle="rgba(10,8,24,.65)";rr(bx-1,by-1,bw+2,7,3);ctx.fill();
+    if(r.hp>0){ctx.fillStyle=hs(h,100,62,.95);rr(bx,by,Math.max(3,bw*r.hp/r.maxHp),5,2.5);ctx.fill()}
+    ctx.strokeStyle=hs(h,100,80,.8);ctx.lineWidth=1;rr(bx-1,by-1,bw+2,7,3);ctx.stroke();
+    if(r.maxHp>=2){ctx.font="700 10px 'Chakra Petch',sans-serif";ctx.textAlign="left";
+      ctx.fillStyle=hs(h,100,84,.95);ctx.fillText("x"+r.hp,bx+bw+5,by+6)}
   }
   // judgment line
   const jg=ctx.createLinearGradient(M.side,0,W-M.side,0);
