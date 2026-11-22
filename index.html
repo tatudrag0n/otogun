@@ -344,7 +344,7 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
             </div>
             <div class="how">
               <svg viewBox="0 0 24 24" fill="none" stroke="#ff2e8a" stroke-width="1.6"><circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="#00e5ff"/><circle cx="12" cy="12" r="1.6" fill="#ffbe2e" stroke="none"/></svg>
-              <div><b>SHOOT ON THE LINE</b><p>敵は同じレーンで撃つ（LOCK ONが目印）。中型は表拍→裏拍（3連符の敵もいる）、大型は拍アタマの瞬間だけ効く。水色の敵はレーンを合わせて長押しビームで削れ</p></div>
+              <div><b>SHOOT ON THE LINE</b><p>敵は同じレーンで撃つ（LOCK ONが目印）。中型は表→裏のタタン（3連符の敵もいる）、大型は拍アタマの瞬間だけ効く。水色の敵はレーンを合わせて長押しビームで削れ</p></div>
             </div>
             <div class="how">
               <svg viewBox="0 0 24 24" fill="none" stroke="#ffbe2e" stroke-width="1.6"><path d="M13 2 5 13h5l-2 9 9-12h-5l1-8z" fill="rgba(255,190,46,.2)"/></svg>
@@ -842,14 +842,19 @@ const raiderY=(r,t)=>M.spawnY+(M.judgeY-M.spawnY)*clamp((t-r.t0)/r.travel,0,1);
 const RAID_HUE={norm:350,mid:28,heavy:265,hold:190};
 function raidGate(r,t){
   const tr=curTrack(),ph=t/tr.slotDur;
-  let P,O,HW;
-  if(r.kind==="heavy"){P=4;O=0;HW=.8}
-  else if(r.maxHp>=3){P=4;O=(r.maxHp-r.hp)%3*(4/3);HW=.5}
-  else{P=4;O=(r.maxHp-r.hp)===0?0:2;HW=.7}
+  let P=4,O=0,HW=.7,target=null;
+  if(r.kind==="heavy"){HW=.8}
+  else if(r.maxHp>=3){HW=.5;
+    if(r.seqBase!=null)target=r.seqBase+(r.maxHp-r.hp)*(4/3)}
+  else if(r.seqT!=null)target=r.seqT;
+  if(target!=null){
+    const dist=Math.abs(ph-target),nx=Math.max(0,target-ph);
+    return{open:dist<=HW,frac:nx/4,next:nx*tr.slotDur};
+  }
   const m=((ph-O)%P+P)%P,dist=Math.min(m,P-m),nx=(P-m)%P;
   return{open:dist<=HW,frac:nx/P,next:nx*tr.slotDur};
 }
-const RAID_LABEL=r=>r.kind==="hold"?"長押しビーム":r.kind==="heavy"?"拍アタマ":r.kind==="mid"?(r.maxHp>=3?"3連符":(r.maxHp-r.hp)===0?"表拍":"ウラ拍"):"";
+const RAID_LABEL=r=>r.kind==="hold"?"長押しビーム":r.kind==="heavy"?"拍アタマ":r.kind==="mid"?(r.maxHp>=3?"3連符":r.seqT!=null?"ウラ拍":"表拍"):"";
 function killRaider(r){
   const t=clock(),x=laneX(r.lane),y=raiderY(r,t),h=RAID_HUE[r.kind];
   r.dead=true;
@@ -868,12 +873,24 @@ function hitRaider(r,b){
     if(!demoMode()&&t-r.lastHint>1.5){r.lastHint=t;popup(x,y-r.r-16,"ビームで削れ!",COL.cyan,12,"レーンを合わせて長押し")}
     return;
   }
-  if(r.kind!=="norm"&&!raidGate(r,(b.ft!=null?b.ft:t)-cfg.offset/1000).open){
+  const gateT=(b.ft!=null?b.ft:t)-cfg.offset/1000;
+  if(r.kind!=="norm"&&!raidGate(r,gateT).open){
     r.shieldFlash=1;
     spawnParticles(b.x,b.y,210,7,150);
     if(!demoMode()&&t-r.lastHint>1.2){r.lastHint=t;
-      popup(b.x,b.y-12,"BLOCKED",COL.mut,11,r.kind==="heavy"?"拍アタマで撃て":r.maxHp>=3?"3連符のリズムで撃て":(r.maxHp-r.hp)===0?"表拍で撃て":"ウラ拍で撃て")}
+      popup(b.x,b.y-12,"BLOCKED",COL.mut,11,r.kind==="heavy"?"拍アタマで撃て":r.maxHp>=3?"3連符のリズムで撃て":r.seqT!=null?"ウラ拍で撃て":"表拍で撃て")}
     return;
+  }
+  if(r.kind==="mid"){
+    const phH=gateT/curTrack().slotDur,center=Math.round(phH/4)*4;
+    let rearm=false;
+    if(r.maxHp>=3){if(r.seqBase==null){r.seqBase=center;rearm=r.hp<r.maxHp}}
+    else if(r.seqT==null){r.seqT=center+2;rearm=r.hp<r.maxHp}
+    if(rearm){
+      r.flash=1;spawnParticles(b.x,b.y,h,8,180);sHit("great",r.lane);
+      if(!demoMode())popup(x,y-r.r-16,"タタンで撃て!",COL.ink,11,r.maxHp>=3?"3連符を組み直し":"表→裏を組み直し");
+      return;
+    }
   }
   r.hp--;r.flash=1;
   spawnParticles(b.x,b.y,h,10,240);
@@ -1180,12 +1197,17 @@ function updateGame(t,dt){
     const rp=raidPlan[raidIdx++];
     raiders.push({lane:rp.lane,hp:rp.hp,maxHp:rp.hp,kind:rp.kind,travel:rp.travel,fireInt:rp.fireInt,
       t0:t,r:rp.kind==="heavy"?M.er*2.05:rp.kind==="hold"?M.er*1.9:rp.kind==="mid"?M.er*1.8:M.er*1.5,
-      flash:0,shieldFlash:0,lastHint:-9,nextFire:rp.kind==="hold"?t+1e9:t+1.6,dead:false});
+      flash:0,shieldFlash:0,lastHint:-9,seqT:null,seqBase:null,nextFire:rp.kind==="hold"?t+1e9:t+1.6,dead:false});
   }
   for(const r of raiders){
     if(r.dead)continue;
     r.flash=Math.max(0,r.flash-dt*5);
     r.shieldFlash=Math.max(0,(r.shieldFlash||0)-dt*4);
+    if(r.kind==="mid"){
+      const phN=t/curTrack().slotDur;
+      if(r.seqT!=null&&phN>r.seqT+.7)r.seqT=null;
+      if(r.seqBase!=null&&phN>r.seqBase+4)r.seqBase=null;
+    }
     if((t-r.t0)/r.travel>=1){r.dead=true;crashRaider(r,demo);continue}
     if(t>=r.nextFire){r.nextFire=t+r.fireInt;
       eshots.push({lane:r.lane,y:raiderY(r,t)+r.r*.6,vy:H*.5,dead:false});sShot(r.lane)}
