@@ -820,36 +820,38 @@ function sFanfare(clear){if(!AC||cfg.muted)return;const t0=AC.currentTime+.05,tr
 function genRaiders(tr,diffKey){
   const rng=mulberry32(hashStr(tr.id+":raid:"+diffKey));
   const plan=[];let lastLane=-1;
-  const push=(sec,bar,heavy)=>{
+  const push=(sec,bar,kind)=>{
     let lane=Math.floor(rng()*7);
     if(lane===lastLane)lane=(lane+1+Math.floor(rng()*6))%7;
     lastLane=lane;
-    plan.push({t:(sec.start+bar)*tr.barSec+tr.barSec*.5,lane,heavy:!!heavy,
-      hp:heavy?(diffKey==="hard"?6:5):1,travel:heavy?16:11.5,fireInt:heavy?2.3:2.9});
+    const hp=kind==="heavy"?(diffKey==="hard"?6:5):kind==="mid"?(diffKey==="hard"?3:2):1;
+    plan.push({t:(sec.start+bar)*tr.barSec+tr.barSec*.5,lane,kind,
+      hp,travel:kind==="heavy"?16:kind==="mid"?13:11.5,fireInt:kind==="heavy"?2.3:kind==="mid"?2.6:2.9});
   };
   tr.sections.forEach(sec=>{
-    if(sec.name==="VERSE"){if(diffKey!=="easy")push(sec,5,false)}
-    else if(sec.name==="CHORUS"){if(diffKey==="easy")push(sec,3,false);
-      else{push(sec,1,false);push(sec,5,false)}}
-    else if(sec.name==="FINAL"){if(diffKey==="easy")push(sec,3,false);
-      else if(diffKey==="normal"){push(sec,1,false);push(sec,5,true)}
-      else{push(sec,1,false);push(sec,3,true);push(sec,5,false)}}
+    if(sec.name==="VERSE"){if(diffKey!=="easy")push(sec,5,"mid")}
+    else if(sec.name==="CHORUS"){if(diffKey==="easy")push(sec,3,"mid");
+      else{push(sec,1,"norm");push(sec,5,"mid")}}
+    else if(sec.name==="FINAL"){if(diffKey==="easy")push(sec,3,"mid");
+      else if(diffKey==="normal"){push(sec,1,"mid");push(sec,5,"heavy")}
+      else{push(sec,1,"mid");push(sec,3,"heavy");push(sec,5,"mid")}}
   });
   return plan.sort((a,b)=>a.t-b.t);
 }
 const raiderY=(r,t)=>M.spawnY+(M.judgeY-M.spawnY)*clamp((t-r.t0)/r.travel,0,1);
+const RAID_HUE={norm:350,mid:28,heavy:265};
 function hitRaider(r,b){
   r.hp--;r.flash=1;
-  const t=clock(),x=laneX(r.lane),y=raiderY(r,t);
-  spawnParticles(b.x,b.y,r.heavy?265:350,10,240);
+  const t=clock(),x=laneX(r.lane),y=raiderY(r,t),h=RAID_HUE[r.kind];
+  spawnParticles(b.x,b.y,h,10,240);
   if(r.hp<=0){
     r.dead=true;
     sHit("perfect",r.lane);
-    spawnParticles(x,y,r.heavy?265:350,r.heavy?36:22,r.heavy?380:300);
-    rings.push({x,y,age:0,life:.5,r0:8,r1:r.r*2.4,h:r.heavy?265:350,w:3});
-    shake=Math.max(shake,RM?0:r.heavy?7:4);
-    if(!demoMode()){raidKills++;const pts=(r.heavy?3000:1500)*(fever?2:1);score+=pts;
-      popup(x,y,"DOWN! +"+pts,COL.amber,17,r.heavy?"大型敵 撃破":"敵 撃破")}
+    spawnParticles(x,y,h,r.kind==="heavy"?36:r.kind==="mid"?28:20,r.kind==="heavy"?380:300);
+    rings.push({x,y,age:0,life:.5,r0:8,r1:r.r*2.4,h,w:3});
+    shake=Math.max(shake,RM?0:r.kind==="heavy"?7:4);
+    if(!demoMode()){raidKills++;const pts=(r.kind==="heavy"?3000:r.kind==="mid"?1500:800)*(fever?2:1);score+=pts;
+      popup(x,y,"DOWN! +"+pts,COL.amber,17,r.kind==="heavy"?"大型敵 撃破":r.kind==="mid"?"中型敵 撃破":"敵 撃破")}
   }else{
     sHit("great",r.lane);
     if(!demoMode())popup(x,y-r.r-16,"あと"+r.hp+"発",COL.ink,12,null);
@@ -857,9 +859,9 @@ function hitRaider(r,b){
 }
 function crashRaider(r,demo){
   const x=laneX(r.lane);
-  spawnParticles(x,M.judgeY,r.heavy?265:350,20,300);
+  spawnParticles(x,M.judgeY,RAID_HUE[r.kind],20,300);
   barriers.push({lane:r.lane,age:0});
-  if(!demo){hp=Math.max(0,hp-(r.heavy?20:14));dmgFlash=1;shake=Math.max(shake,RM?0:7);
+  if(!demo){hp=Math.max(0,hp-(r.kind==="heavy"?20:r.kind==="mid"?14:10));dmgFlash=1;shake=Math.max(shake,RM?0:7);
     popup(x,M.judgeY-30,"BREACH!",COL.miss,18,"敵がラインを突破");sMiss()}
 }
 
@@ -1149,8 +1151,8 @@ function updateGame(t,dt){
   bullets=bullets.filter(b=>!b.dead);
   while(raidIdx<raidPlan.length&&raidPlan[raidIdx].t<=t){
     const rp=raidPlan[raidIdx++];
-    raiders.push({lane:rp.lane,hp:rp.hp,maxHp:rp.hp,heavy:rp.heavy,travel:rp.travel,fireInt:rp.fireInt,
-      t0:t,r:rp.heavy?M.er*2.05:M.er*1.5,flash:0,nextFire:t+1.6,dead:false});
+    raiders.push({lane:rp.lane,hp:rp.hp,maxHp:rp.hp,kind:rp.kind,travel:rp.travel,fireInt:rp.fireInt,
+      t0:t,r:rp.kind==="heavy"?M.er*2.05:rp.kind==="mid"?M.er*1.8:M.er*1.5,flash:0,nextFire:t+1.6,dead:false});
   }
   for(const r of raiders){
     if(r.dead)continue;
@@ -1325,7 +1327,7 @@ function render(t){
   ctx.restore(); // clip
   // raiders (multi-hit enemies)
   for(const r of raiders){
-    const y=raiderY(r,t),wx=laneX(r.lane)+Math.sin(t*2+r.lane*1.7)*2,x=wx,h=r.heavy?265:350,R=r.r;
+    const y=raiderY(r,t),wx=laneX(r.lane)+Math.sin(t*2+r.lane*1.7)*2,x=wx,h=RAID_HUE[r.kind],R=r.r;
     const tele=r.nextFire-t<.5&&r.nextFire-t>0;
     if(tele){ctx.save();ctx.strokeStyle=`rgba(255,59,77,${.22+.3*Math.abs(Math.sin(t*14))})`;
       ctx.setLineDash([4,7]);ctx.lineWidth=1.2;
@@ -1336,7 +1338,7 @@ function render(t){
     ctx.beginPath();
     ctx.moveTo(0,R);ctx.lineTo(R*.85,R*.25);ctx.lineTo(R*.55,-R*.55);ctx.lineTo(0,-R*.3);ctx.lineTo(-R*.55,-R*.55);ctx.lineTo(-R*.85,R*.25);ctx.closePath();
     ctx.fill();ctx.stroke();
-    ctx.rotate(t*(r.heavy?.7:1.1));
+    ctx.rotate(t*(r.kind==="heavy"?.7:1.1));
     ctx.strokeStyle=hs(h,100,76,.7);ctx.lineWidth=1.3;
     ctx.beginPath();ctx.arc(0,0,R*.55,0,TAU);ctx.stroke();
     ctx.beginPath();ctx.moveTo(R*.55,0);ctx.lineTo(-R*.55,0);ctx.moveTo(0,R*.55);ctx.lineTo(0,-R*.55);ctx.stroke();
@@ -1609,7 +1611,7 @@ function showResult(){
   resShown=0;resTarget=score;resDone=false;$("resScore").textContent="0";
   $("resCombo").textContent=String(maxCombo);
   $("resAcc").textContent=acc.toFixed(1)+"%";
-  $("resKills").textContent=kills+"/"+total+(raidKills?" ＋大型等"+raidKills+"撃墜":"");
+  $("resKills").textContent=kills+"/"+total+(raidKills?" ＋敵機"+raidKills+"撃墜":"");
   $("resDiff").textContent=DIFFS[cfg.diff].label+" / "+cfg.speed;
   const rows=[["PERFECT",stats.perfect,COL.perfect],["GREAT",stats.great,COL.great],["GOOD",stats.good,COL.good],["MISS",stats.miss,COL.miss]];
   $("judgeRows").innerHTML=rows.map(([l,v,c])=>
