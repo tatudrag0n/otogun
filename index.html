@@ -825,7 +825,7 @@ function genRaiders(tr,diffKey){
     if(lane===lastLane)lane=(lane+1+Math.floor(rng()*6))%7;
     lastLane=lane;
     plan.push({t:(sec.start+bar)*tr.barSec+tr.barSec*.5,lane,heavy:!!heavy,
-      hp:heavy?(diffKey==="hard"?6:5):2,travel:heavy?16:11.5,fireInt:heavy?2.3:2.9});
+      hp:heavy?(diffKey==="hard"?6:5):1,travel:heavy?16:11.5,fireInt:heavy?2.3:2.9});
   };
   tr.sections.forEach(sec=>{
     if(sec.name==="VERSE"){if(diffKey!=="easy")push(sec,5,false)}
