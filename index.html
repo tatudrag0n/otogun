@@ -1898,10 +1898,10 @@ function selectTrack(id,preview){
   if(state==="title")resetDemo();
 }
 function refreshBests(){
-  document.querySelectorAll(".track").forEach(el=>{
+  document.querySelectorAll(".track[data-t]").forEach(el=>{
     el.querySelector(".tb").innerHTML=bestLabel(el.dataset.t+":"+cfg.diff);
     el.querySelector(".tm").textContent=(()=>{const tr=TRACKS.find(t=>t.id===el.dataset.t);
-      return tr.bpm+" BPM ・ "+fmtTime(tr.dur)+" ・ ノーツ "+genChart(tr,cfg.diff).length})();
+      return tr?tr.bpm+" BPM ・ "+fmtTime(tr.dur)+" ・ ノーツ "+genChart(tr,cfg.diff).length:""})();
   });
   const b=bests[curTrackId+":"+cfg.diff];
   $("bestBox").innerHTML=b?`<b>${b.score.toLocaleString()}</b><span class="brk">${b.rank}${b.fc?" ★":""}</span>`:"未プレイ ─ 出撃せよ";
@@ -2022,13 +2022,13 @@ function frame(now){
 }
 /* ================= boot ================= */
 layout();
+requestAnimationFrame(frame);
 buildTracks();
 applyCfgUI();
 setMuted(cfg.muted);
 refreshBests();
 refreshNowPlaying();
 resetDemo();
-requestAnimationFrame(frame);
 })();
 </script>
 </body>
