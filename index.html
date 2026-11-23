@@ -141,6 +141,12 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
 #app[data-state="play"] #btnPause,#app[data-state="countdown"] #btnPause,#app[data-state="pause"] #btnPause{display:flex}
 /* countdown */
 #cd{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+#tutBanner{position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:7;width:min(92%,430px);
+  background:rgba(8,10,26,.82);border:1px solid rgba(0,229,255,.55);border-radius:12px;padding:9px 14px;
+  text-align:center;pointer-events:none;backdrop-filter:blur(3px)}
+#tutTtl{font-family:var(--disp);font-weight:700;font-size:15px;letter-spacing:.12em;color:#7ff3ff}
+#tutTxt{font-size:12.5px;line-height:1.55;color:#f2ecff;margin-top:2px}
+.tut-card{border-color:rgba(0,229,255,.6)!important}
 #cd.hidden{display:none}
 #cdNum{font-family:var(--disp);font-weight:700;font-style:italic;font-size:clamp(90px,24vw,150px);line-height:1;
   background:linear-gradient(120deg,var(--cyan),var(--mag));-webkit-background-clip:text;background-clip:text;color:transparent;
@@ -329,6 +335,7 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
       </div>
 
       <div id="cd" class="hidden"><div id="cdNum">3</div><div id="cdSub">GET READY</div></div>
+      <div id="tutBanner" class="hidden"><div id="tutTtl"></div><div id="tutTxt"></div></div>
 
       <section id="scrTitle" class="screen">
         <header class="t-head">
@@ -351,6 +358,13 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
               <div><b>COMBO &amp; FEVER</b><p>コンボ30でFEVER突入、スコア×2。空撃ち过多は過熱に注意</p></div>
             </div>
           </div>
+          <div class="sec-label">TUTORIAL ─ はじめての人へ</div>
+          <button id="btnTut" type="button" class="track tut-card">
+            <span class="jk" id="tutJacket"></span>
+            <span><span class="tt">TUTORIAL</span><span class="tj" style="display:block">チュートリアル（きらきら星）</span>
+            <span class="tm">ノーツ → 敵 → ビーム → タタンを順番に練習 ・ ダメージなし</span></span>
+            <span class="tb"><span class="bl">FIRST</span><br><span class="rk">おすすめ</span></span>
+          </button>
           <div class="sec-label">TRACK SELECT ─ 楽曲選択</div>
           <div id="tracks"></div>
           <div class="sec-label">SYSTEM ─ 設定</div>
@@ -460,6 +474,7 @@ const DIFFS={
   normal:{label:"NORMAL",approach:1.85,dmg:11,minGap:2,laneGap:4,runMax:2,budget:{INTRO:1,VERSE:3,BUILD:4,CHORUS:5,BREAK:2,FINAL:6,OUTRO:1}},
   hard:{label:"HARD",approach:1.5,dmg:14,minGap:1,laneGap:2,runMax:4,budget:{INTRO:2,VERSE:5,BUILD:6,CHORUS:8,BREAK:3,FINAL:9,OUTRO:1}}
 };
+DIFFS.tutorial={label:"TUTORIAL",approach:2.6,dmg:0,minGap:4,laneGap:8,runMax:1,budget:{INTRO:0,VERSE:2,BUILD:2,CHORUS:2,BREAK:2,FINAL:3,OUTRO:1}};
 const FEVER_AT=30;
 
 /* ================= config / records ================= */
@@ -498,6 +513,37 @@ const FATE_CH=[
  [[0,2,2],[2,2,2],[4,2,2],[6,0,10]],
  [[0,1,2],[2,2,2],[4,3,2],[6,4,10]]];
 const SN_ROLL=["....x.......x...","....x.......x...","....x...x...x...","x.x.x.x.x.x.x.x."];
+const ELISE_B1=[[0,11,2],[2,10,2,1],[4,11,2],[6,10,2,1],[8,11,2],[10,8,2],[12,10,2],[14,9,2]];
+const ELISE_B2=[[0,7,6],[8,2,2],[10,4,2],[12,8,4]];
+const ELISE_B3=[[0,4,2],[2,6,2],[4,8,2],[6,9,8]];
+const ELISE_CH=[ELISE_B1,ELISE_B2,ELISE_B3,ELISE_B1,ELISE_B2,ELISE_B3,ELISE_B1,[[0,7,14]]];
+const TURK_B4=[[0,7,2],[2,6,2],[4,7,2],[6,8,2],[8,7,2],[10,6,2],[12,7,4]];
+const TURK_CH=[
+ [[0,8,2],[2,7,2],[4,6,2],[6,7,2],[8,9,4]],
+ [[0,10,2],[2,9,2],[4,8,2],[6,9,2],[8,11,4]],
+ [[0,12,2],[2,11,2],[4,10,2,1],[6,11,2],[8,8,4]],
+ TURK_B4,
+ [[0,9,2],[2,8,2],[4,7,2],[6,8,2],[8,9,2],[10,10,2],[12,11,2],[14,12,2]],
+ [[0,11,2],[2,10,2],[4,9,2],[6,8,2],[8,7,6]],
+ [[0,8,2],[2,7,2],[4,6,2],[6,7,2],[8,9,4]],
+ TURK_B4];
+const SPRING_B1=[[0,7,4],[4,9,4],[8,11,8]];
+const SPRING_B2=[[0,11,2],[2,12,2],[4,11,2],[6,10,2],[8,9,2],[10,8,2],[12,7,4]];
+const SPRING_B4=[[0,11,2],[2,12,2],[4,11,2],[6,10,2],[8,9,4],[12,7,4]];
+const SPRING_CH=[SPRING_B1,SPRING_B2,SPRING_B1,SPRING_B4,SPRING_B1,SPRING_B2,SPRING_B1,SPRING_B4];
+const TWINK_CH=[
+ [[0,0,4],[4,0,4],[8,4,4],[12,4,4]],
+ [[0,5,4],[4,5,4],[8,4,8]],
+ [[0,3,4],[4,3,4],[8,2,4],[12,2,4]],
+ [[0,1,4],[4,1,4],[8,0,8]],
+ [[0,4,4],[4,4,4],[8,3,4],[12,3,4]],
+ [[0,2,4],[4,2,4],[8,1,8]],
+ [[0,4,4],[4,4,4],[8,3,4],[12,3,4]],
+ [[0,2,4],[4,2,4],[8,1,8]],
+ [[0,0,4],[4,0,4],[8,4,4],[12,4,4]],
+ [[0,5,4],[4,5,4],[8,4,8]],
+ [[0,3,4],[4,3,4],[8,2,4],[12,2,4]],
+ [[0,1,4],[4,1,4],[8,0,8]]];
 const TRACKS=[
  {id:"canon",title:"CANON",jp:"パッヘルベルのカノン",bpm:120,hue:150,kit:"neon",lead:"pluck",
   root:50,leadRoot:62,scale:[0,2,4,5,7,9,11],prog:[0,4,5,2,3,0,3,4],stack:[0,2,4],
@@ -530,6 +576,50 @@ const TRACKS=[
    {name:"CHORUS",bars:8,kick:"x...x...x...x.x.",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"..r...r...r...r.",stabs:"..x...x...x...x.",arp:4,arpV:.6,melody:FATE_CH,crash:1,fill:1},
    {name:"BREAK",bars:4,kick:"x...............",snare:"........x.......",hatO:"..x...x...x...x.",hatOV:.5,bass:"r.......",pad:1,melody:[[[0,4,10]],[],[[0,2,10]],[]],down:1},
    {name:"FINAL",bars:8,kick:"x...x...x...x.x.",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.8,hatO:"..x...x...x...x.",hatOV:.5,bass:"..r...r...r...r.",stabs:"..x...x...x...x.",arp:2,arpV:.9,melody:FATE_CH,crash:1,fill:1},
+   {name:"OUTRO",bars:2,kick:"x...............",snare:"................",hatC:"................",bass:"r...............",pad:1,melody:[[[0,0,14]],[]],crash:1}
+  ]},
+ {id:"elise",title:"FÜR ELISE",jp:"エリーゼのために（ベートーヴェン）",bpm:116,hue:265,kit:"neon",lead:"pluck",
+  root:45,leadRoot:57,scale:[0,2,3,5,7,8,11],prog:[0,0,4,0,0,4,0,0],stack:[0,2,4],
+  sections:[
+   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5},
+   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.45,melody:ELISE_CH,fill:1},
+   {name:"BUILD",bars:8,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r...r...r...r...",pad:1,arp:2,arpV:.7,melody:ELISE_CH,riser:2},
+   {name:"CHORUS",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r...",arp:4,arpV:.5,melody:ELISE_CH,crash:1,fill:1},
+   {name:"BREAK",bars:4,kick:"x...............",snare:"........x.......",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5,melody:[[[0,11,10]],[],[[0,9,10]],[]],down:1},
+   {name:"FINAL",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.6,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r...",arp:2,arpV:.8,melody:ELISE_CH,crash:1,fill:1},
+   {name:"OUTRO",bars:2,kick:"x...............",snare:"................",hatC:"................",bass:"r...............",pad:1,melody:[[[0,7,14]],[]],crash:1}
+  ]},
+ {id:"turk",title:"TURKISH MARCH",jp:"トルコ行進曲（モーツァルト）",bpm:144,hue:200,kit:"neon",lead:"saw",
+  root:45,leadRoot:57,scale:[0,2,3,5,7,8,11],prog:[0,4,4,0,0,4,0,0],stack:[0,2,4],
+  sections:[
+   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5},
+   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.45,bass:"r.r.r.r.r.r.r.r.",arp:4,arpV:.45,melody:TURK_CH,fill:1},
+   {name:"BUILD",bars:8,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r.r.r.r.r.r.r.r.",pad:1,arp:2,arpV:.7,melody:TURK_CH,riser:2},
+   {name:"CHORUS",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r.r.r.r.r.r.r.r.",arp:4,arpV:.5,melody:TURK_CH,crash:1,fill:1},
+   {name:"BREAK",bars:4,kick:"x...............",snare:"........x.......",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5,melody:[[[0,9,10]],[],[[0,7,10]],[]],down:1},
+   {name:"FINAL",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.6,hatO:"..x...x...x...x.",hatOV:.5,bass:"r.r.r.r.r.r.r.r.",arp:2,arpV:.8,melody:TURK_CH,crash:1,fill:1},
+   {name:"OUTRO",bars:2,kick:"x...............",snare:"................",hatC:"................",bass:"r...............",pad:1,melody:[[[0,7,14]],[]],crash:1}
+  ]},
+ {id:"spring",title:"SPRING",jp:"四季『春』（ヴィヴァルディ）",bpm:112,hue:95,kit:"neon",lead:"pluck",
+  root:52,leadRoot:64,scale:[0,2,4,5,7,9,11],prog:[0,4,0,4],stack:[0,2,4],
+  sections:[
+   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5},
+   {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.45,melody:SPRING_CH,fill:1},
+   {name:"BUILD",bars:8,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r...r...r...r...",pad:1,arp:2,arpV:.7,melody:SPRING_CH,riser:2},
+   {name:"CHORUS",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r...",arp:4,arpV:.5,melody:SPRING_CH,crash:1,fill:1},
+   {name:"BREAK",bars:4,kick:"x...............",snare:"........x.......",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5,melody:[[[0,11,10]],[],[[0,9,10]],[]],down:1},
+   {name:"FINAL",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.6,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r...",arp:2,arpV:.8,melody:SPRING_CH,crash:1,fill:1},
+   {name:"OUTRO",bars:2,kick:"x...............",snare:"................",hatC:"................",bass:"r...............",pad:1,melody:[[[0,7,14]],[]],crash:1}
+  ]},
+ {id:"tut",title:"TUTORIAL",jp:"チュートリアル（きらきら星）",bpm:100,hue:190,kit:"neon",lead:"pluck",tut:true,
+  root:48,leadRoot:72,scale:[0,2,4,5,7,9,11],prog:[0,3,0,4],stack:[0,2,4],
+  sections:[
+   {name:"INTRO",bars:2,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.5,bass:"r.......",pad:1,arp:4,arpV:.4},
+   {name:"VERSE",bars:4,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.4,melody:TWINK_CH},
+   {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.4,melody:TWINK_CH},
+   {name:"CHORUS",bars:4,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.4,melody:TWINK_CH},
+   {name:"BREAK",bars:4,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",bass:"r.......",pad:1,arp:4,arpV:.4,melody:TWINK_CH},
+   {name:"FINAL",bars:6,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,bass:"r...r...r...r...",arp:4,arpV:.5,melody:TWINK_CH},
    {name:"OUTRO",bars:2,kick:"x...............",snare:"................",hatC:"................",bass:"r...............",pad:1,melody:[[[0,0,14]],[]],crash:1}
   ]}
 ];
@@ -732,7 +822,7 @@ function scheduleSlot(t,i,tm){
   }
   if(sec.melody){const mb=sec.melody[b%sec.melody.length];
     if(mb)for(const ev of mb)if(ev[0]===pos)
-      leadN(tm,degToMidi(t.leadRoot+12*(sec.leadOct||0),t.scale,ev[1]),ev[2]*sd*.95,.95,t.lead)}
+      leadN(tm,degToMidi(t.leadRoot+12*(sec.leadOct||0),t.scale,ev[1])+(ev[3]||0),ev[2]*sd*.95,.95,t.lead)}
   if(sec.riser&&b===sec.bars-sec.riser&&pos===0)riserFx(tm,sec.riser*t.barSec);
   if(sec.crash&&b===0&&pos===0){crashFx(tm,.3);subDrop(tm)}
   if(sec.down&&b===0&&pos===0)downFx(tm);
@@ -975,6 +1065,10 @@ let juid=0;
 function jacket(tr){
   const u=tr.id+(juid++);
   if(tr.id==="canon")return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2e22"/><stop offset="1" stop-color="#060312"/></linearGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><g fill="none"><circle cx="60" cy="60" r="44" stroke="#ffbe2e" stroke-width="1" opacity=".45"/><circle cx="60" cy="60" r="35" stroke="#7ff3ff" stroke-width=".8" opacity=".55"/><circle cx="60" cy="60" r="26" stroke="#ffbe2e" stroke-width="1" opacity=".75"/><circle cx="60" cy="60" r="17" stroke="#7ff3ff" stroke-width=".8" opacity=".8"/></g><circle cx="60" cy="60" r="6" fill="#ffbe2e"/><g fill="#ffbe2e"><circle cx="60" cy="16" r="1.6"/><circle cx="91" cy="38" r="1.6"/><circle cx="95" cy="69" r="1.6"/><circle cx="60" cy="104" r="1.6" fill="#7ff3ff"/><circle cx="25" cy="69" r="1.6" fill="#7ff3ff"/><circle cx="29" cy="38" r="1.6"/></g><g stroke="#f2ecff" stroke-width=".7" opacity=".35"><line x1="10" y1="98" x2="110" y2="98"/><line x1="10" y1="104" x2="110" y2="104"/><line x1="10" y1="110" x2="110" y2="110"/></g></svg>`;
+  if(tr.id==="elise")return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#241243"/><stop offset="1" stop-color="#060312"/></linearGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><circle cx="88" cy="30" r="13" fill="#f2ecff" opacity=".9"/><circle cx="88" cy="30" r="19" fill="none" stroke="#b18cff" stroke-width="1" opacity=".5"/><g fill="#f2ecff"><rect x="18" y="66" width="12" height="38" rx="2"/><rect x="33" y="66" width="12" height="38" rx="2"/><rect x="48" y="66" width="12" height="38" rx="2"/><rect x="63" y="66" width="12" height="38" rx="2"/><rect x="78" y="66" width="12" height="38" rx="2"/></g><g fill="#17102e"><rect x="27" y="66" width="8" height="23" rx="1.5"/><rect x="42" y="66" width="8" height="23" rx="1.5"/><rect x="72" y="66" width="8" height="23" rx="1.5"/><rect x="87" y="66" width="8" height="23" rx="1.5"/></g><g fill="#b18cff"><circle cx="24" cy="26" r="1.4"/><circle cx="44" cy="16" r="1.1"/><circle cx="60" cy="34" r="1.2"/></g></svg>`;
+  if(tr.id==="turk")return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d0a18"/><stop offset="1" stop-color="#060312"/></linearGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><path d="M74 22a34 34 0 1 0 24 46A27 27 0 0 1 74 22z" fill="#ffbe2e"/><path d="M95 30l2.6 5.8 6.4.7-4.7 4.3 1.3 6.3-5.6-3.2-5.6 3.2 1.3-6.3-4.7-4.3 6.4-.7z" fill="#ff3b4d"/><g fill="none" stroke="#7ff3ff" stroke-width=".8" opacity=".6"><path d="M14 92h92M14 100h92M14 108h92"/></g><g fill="#f2ecff"><circle cx="26" cy="96" r="2.4"/><circle cx="52" cy="104" r="2.4"/><circle cx="78" cy="96" r="2.4"/></g></svg>`;
+  if(tr.id==="spring")return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d3316"/><stop offset="1" stop-color="#060312"/></linearGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><circle cx="60" cy="44" r="15" fill="#ffbe2e"/><g stroke="#ffbe2e" stroke-width="2" opacity=".8"><line x1="60" y1="16" x2="60" y2="24"/><line x1="60" y1="64" x2="60" y2="72"/><line x1="32" y1="44" x2="40" y2="44"/><line x1="80" y1="44" x2="88" y2="44"/><line x1="40" y1="24" x2="46" y2="30"/><line x1="74" y1="58" x2="80" y2="64"/><line x1="80" y1="24" x2="74" y2="30"/><line x1="46" y1="58" x2="40" y2="64"/></g><path d="M24 100c8-12 20-16 30-10-4 10-16 14-30 10z" fill="#39d353" opacity=".85"/><path d="M66 104c6-9 16-12 24-7-3 8-13 11-24 7z" fill="#7ee787" opacity=".8"/><g fill="#ffb7d5"><circle cx="30" cy="70" r="2.6"/><circle cx="92" cy="82" r="2.2"/><circle cx="84" cy="62" r="1.8"/></g></svg>`;
+  if(tr.id==="tut")return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2b3d"/><stop offset="1" stop-color="#060312"/></linearGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><path d="M60 18l9.5 26.5 28 .8-22 17 7.5 27.3L60 73.5 37 89.6 44.5 62.3l-22-17 28-.8z" fill="#ffbe2e"/><g fill="#7ff3ff"><circle cx="24" cy="26" r="1.6"/><circle cx="98" cy="20" r="1.3"/><circle cx="104" cy="52" r="1.5"/><circle cx="16" cy="58" r="1.2"/><circle cx="30" cy="98" r="1.3"/><circle cx="94" cy="100" r="1.6"/></g></svg>`;
   if(tr.id==="ode")return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#12264d"/><stop offset="1" stop-color="#060312"/></linearGradient><radialGradient id="b${u}"><stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#ffbe2e"/></radialGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><g stroke="#ffbe2e" stroke-width="2" opacity=".85"><line x1="60" y1="6" x2="60" y2="22"/><line x1="60" y1="98" x2="60" y2="114"/><line x1="6" y1="60" x2="22" y2="60"/><line x1="98" y1="60" x2="114" y2="60"/><line x1="22" y1="22" x2="33" y2="33"/><line x1="87" y1="87" x2="98" y2="98"/><line x1="98" y1="22" x2="87" y2="33"/><line x1="33" y1="87" x2="22" y2="98"/></g><circle cx="60" cy="60" r="24" fill="url(#b${u})"/><circle cx="60" cy="60" r="31" fill="none" stroke="#f2ecff" stroke-width=".8" opacity=".5"/><circle cx="24" cy="18" r="1.2" fill="#f2ecff"/><circle cx="100" cy="30" r="1" fill="#f2ecff"/><circle cx="90" cy="104" r="1.2" fill="#7ff3ff"/></svg>`;
   return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b0710"/><stop offset="1" stop-color="#060312"/></linearGradient></defs><rect width="120" height="120" fill="url(#a${u})"/><circle cx="60" cy="60" r="46" fill="none" stroke="#ff3b4d" stroke-width="1" opacity=".5"/><circle cx="60" cy="60" r="38" fill="none" stroke="#f2ecff" stroke-width=".6" opacity=".3"/><g fill="#ff3b4d"><rect x="30" y="38" width="8" height="30" rx="2"/><rect x="46" y="38" width="8" height="30" rx="2"/><rect x="62" y="38" width="8" height="30" rx="2"/><rect x="78" y="52" width="24" height="8" rx="2"/></g><g fill="#ffbe2e"><circle cx="34" cy="82" r="1.6"/><circle cx="50" cy="82" r="1.6"/><circle cx="66" cy="82" r="1.6"/><rect x="78" y="80" width="24" height="3" rx="1.5"/></g><circle cx="18" cy="18" r="1.1" fill="#f2ecff"/><circle cx="103" cy="100" r="1.1" fill="#f2ecff"/></svg>`;
 }
@@ -1197,7 +1291,7 @@ function updateGame(t,dt){
     const rp=raidPlan[raidIdx++];
     raiders.push({lane:rp.lane,hp:rp.hp,maxHp:rp.hp,kind:rp.kind,travel:rp.travel,fireInt:rp.fireInt,
       t0:t,r:rp.kind==="heavy"?M.er*2.05:rp.kind==="hold"?M.er*1.9:rp.kind==="mid"?M.er*1.8:M.er*1.5,
-      flash:0,shieldFlash:0,lastHint:-9,seqT:null,seqBase:null,nextFire:rp.kind==="hold"?t+1e9:t+1.6,dead:false});
+      flash:0,shieldFlash:0,lastHint:-9,seqT:null,seqBase:null,nextFire:rp.firstFire!=null?t+rp.firstFire:(rp.kind==="hold"?t+1e9:t+1.6),dead:false});
   }
   for(const r of raiders){
     if(r.dead)continue;
@@ -1243,6 +1337,7 @@ function updateGame(t,dt){
     if(jammed){if(Math.random()<.4)particles.push({x:ship.x+(Math.random()*20-10),y:M.shipY-8,
       vx:(Math.random()*20-10),vy:-40-Math.random()*30,age:0,life:.6,h:200,sz:2.5,kind:"steam"});
       if(heat<=32){jammed=false;sReady()}}
+    if(tutMode){hp=100;updTutBanner(t)}
     if(!ending){
       if(hp<=0)beginFail();
       else if(t>tr.dur+.5)beginClear();
@@ -1661,12 +1756,44 @@ function buildMarkers(){
   tr.sections.forEach(s=>{if(s.start===0)return;
     const i=document.createElement("i");i.style.left=(s.start*tr.barSec/tr.dur*100)+"%";box.appendChild(i)});
 }
+let tutMode=false,tutStepIdx=-1,tutSteps=[];
+function genTutRaiders(tr){
+  const S=n=>tr.sections.find(x=>x.name===n),plan=[];
+  const push=(sec,bar,lane,kind,hp,travel,fireInt,firstFire)=>{
+    plan.push({t:(sec.start+bar)*tr.barSec+tr.barSec*.5,lane,kind,hp,travel,fireInt,firstFire})};
+  push(S("BUILD"),1,3,"norm",1,14,9999,1e9);
+  push(S("CHORUS"),1,4,"hold",100,16,9999,1e9);
+  push(S("BREAK"),1,2,"mid",2,15,9999,1e9);
+  const F=S("FINAL");
+  push(F,0,1,"norm",1,13,2.9,1.6);
+  push(F,2,5,"mid",2,14,2.6,1.6);
+  push(F,4,3,"hold",100,15,9999,1e9);
+  return plan;
+}
+function buildTutSteps(tr){
+  const S=n=>tr.sections.find(x=>x.name===n),bs=tr.barSec;
+  tutSteps=[
+   {t:-3.4,ttl:"STEP 1 ─ ノーツを叩く",txt:"ノーツが判定ラインに重なる瞬間に、そのレーンをタップ！"},
+   {t:S("BUILD").start*bs,ttl:"STEP 2 ─ 敵を撃つ",txt:"敵と同じレーンをタップすると弾が当たる。近づくと LOCK ON が出るよ"},
+   {t:S("CHORUS").start*bs,ttl:"STEP 3 ─ ビームで削る敵",txt:"水色の敵は弾が効かない。同じレーンで長押しするとビームが出る"},
+   {t:S("BREAK").start*bs,ttl:"STEP 4 ─ タタンで倒す敵",txt:"オレンジの敵は 表→裏 のタタン。輪が縮むのに合わせて タ・タン！"},
+   {t:S("FINAL").start*bs,ttl:"STEP 5 ─ 実戦！",txt:"全部入り。敵弾は避けるか撃ち落とそう。チュートリアル中はダメージなし"},
+   {t:S("OUTRO").start*bs,ttl:"おつかれさま！",txt:"基本はバッチリ。タイトルに戻って好きな曲で遊んでみよう"}];
+  tutStepIdx=-1;
+}
+function updTutBanner(t){
+  if(!tutMode||!tutSteps.length)return;
+  let i=tutSteps.length-1;while(i>0&&tutSteps[i].t>t)i--;
+  if(i!==tutStepIdx){tutStepIdx=i;const st=tutSteps[i];
+    $("tutTtl").textContent=st.ttl;$("tutTxt").textContent=st.txt}
+}
+function startTutorial(){initAudio();tutMode=true;curTrackId="tut";startStage()}
 function startStage(){
   initAudio();stopSong();
   const tr=curTrack();
-  chart=genChart(tr,cfg.diff);
-  raidPlan=genRaiders(tr,cfg.diff);
-  approach=DIFFS[cfg.diff].approach*(3/cfg.speed);
+  chart=genChart(tr,tutMode?"tutorial":cfg.diff);
+  raidPlan=tutMode?genTutRaiders(tr):genRaiders(tr,cfg.diff);
+  approach=tutMode?DIFFS.tutorial.approach:DIFFS[cfg.diff].approach*(3/cfg.speed);
   resetEntities();
   hueCur=hueTarget=tr.hue;
   if(AC){songStart=AC.currentTime+3.4;startSong(tr,songStart);
@@ -1676,6 +1803,8 @@ function startStage(){
   showScreen(null);$("cd").classList.remove("hidden");
   $("cdNum").textContent="3";$("cdSub").textContent="GET READY";
   buildMarkers();refreshNowPlaying();
+  if(tutMode){buildTutSteps(tr);$("tutBanner").classList.remove("hidden")}
+  else $("tutBanner").classList.add("hidden");
 }
 function resetDemo(){
   const tr=curTrack();
@@ -1686,6 +1815,8 @@ function resetDemo(){
   hueCur=hueTarget=tr.hue;
 }
 function gotoTitle(){
+  if(tutMode){tutMode=false;curTrackId=cfg.track;$("tutBanner").classList.add("hidden");
+    document.querySelectorAll(".track").forEach(el=>el.classList.toggle("sel",el.dataset.t===curTrackId))}
   stopSong();if(AC&&AC.state==="suspended")AC.resume();
   state="title";app.dataset.state="title";
   showScreen("scrTitle");$("cd").classList.add("hidden");
@@ -1713,11 +1844,12 @@ function showResult(){
   const fc=cleared&&stats.miss===0&&kills===total;
   const ap=fc&&stats.great===0&&stats.good===0;
   const key=tr.id+":"+cfg.diff,old=bests[key];
-  const nr=cleared&&(!old||score>old.score);
+  const nr=!tutMode&&cleared&&(!old||score>old.score);
   if(nr){bests[key]={score,rank,acc:+acc.toFixed(1),fc};saveJSON("otogun_best_v1",bests)}
   $("resHead").textContent=cleared?"STAGE CLEAR":"STAGE FAILED";
   $("resHead").classList.toggle("fail",!cleared);
   $("resTrack").textContent=tr.title+" ─ "+DIFFS[cfg.diff].label+" / SPEED "+cfg.speed;
+  if(tutMode){$("resHead").textContent="TUTORIAL CLEAR!";$("resTrack").textContent="チュートリアル完了 ─ きらきら星"}
   const rk=$("rank");rk.textContent=rank;rk.className="r"+rank;
   rk.style.animation="none";void rk.offsetWidth;rk.style.animation="";
   const bd=$("rankBadges");bd.innerHTML="";
@@ -1728,7 +1860,7 @@ function showResult(){
   $("resCombo").textContent=String(maxCombo);
   $("resAcc").textContent=acc.toFixed(1)+"%";
   $("resKills").textContent=kills+"/"+total+(raidKills?" ＋敵機"+raidKills+"撃墜":"");
-  $("resDiff").textContent=DIFFS[cfg.diff].label+" / "+cfg.speed;
+  $("resDiff").textContent=tutMode?"TUTORIAL":DIFFS[cfg.diff].label+" / "+cfg.speed;
   const rows=[["PERFECT",stats.perfect,COL.perfect],["GREAT",stats.great,COL.great],["GOOD",stats.good,COL.good],["MISS",stats.miss,COL.miss]];
   $("judgeRows").innerHTML=rows.map(([l,v,c])=>
     `<div class="jrow"><span class="jl" style="color:${c}">${l}</span><span class="jb"><i data-w="${(total?v/total*100:0).toFixed(1)}" style="background:${c}"></i></span><b style="color:${c}">${v}</b></div>`).join("");
@@ -1744,7 +1876,8 @@ function bestLabel(key){const b=bests[key];
     :`<span class="bl">BEST</span><span class="none">未プレイ</span>`}
 function buildTracks(){
   const box=$("tracks");box.innerHTML="";
-  TRACKS.forEach(tr=>{
+  const tt=TRACKS.find(t=>t.tut);if(tt)$("tutJacket").innerHTML=jacket(tt);
+  TRACKS.filter(tr=>!tr.tut).forEach(tr=>{
     const btn=document.createElement("button");
     btn.type="button";btn.className="track"+(tr.id===curTrackId?" sel":"");
     btn.dataset.t=tr.id;
@@ -1850,7 +1983,8 @@ cv.addEventListener("pointermove",e=>{
 });
 cv.addEventListener("pointerleave",()=>hoverLane=-1);
 cv.addEventListener("contextmenu",e=>e.preventDefault());
-$("btnStart").addEventListener("click",()=>{initAudio();sUI();startStage()});
+$("btnStart").addEventListener("click",()=>{initAudio();sUI();tutMode=false;startStage()});
+$("btnTut").addEventListener("click",()=>{initAudio();sUI();startTutorial()});
 $("btnSound").addEventListener("click",()=>{initAudio();setMuted(!cfg.muted)});
 $("btnPause").addEventListener("click",()=>{sUI();if(state==="pause")resumeGame();else pauseGame()});
 $("btnResume").addEventListener("click",()=>{sUI();resumeGame()});
