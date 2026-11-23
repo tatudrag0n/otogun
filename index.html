@@ -143,7 +143,7 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
 #cd{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
 #tutBanner{position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:7;width:min(92%,430px);
   background:rgba(8,10,26,.82);border:1px solid rgba(0,229,255,.55);border-radius:12px;padding:9px 14px;
-  text-align:center;pointer-events:none;backdrop-filter:blur(3px)}
+  text-align:center;pointer-events:none}
 #tutTtl{font-family:var(--disp);font-weight:700;font-size:15px;letter-spacing:.12em;color:#7ff3ff}
 #tutTxt{font-size:12.5px;line-height:1.55;color:#f2ecff;margin-top:2px}
 .tut-card{border-color:rgba(0,229,255,.6)!important}
@@ -514,14 +514,14 @@ const FATE_CH=[
  [[0,1,2],[2,2,2],[4,3,2],[6,4,10]]];
 const SN_ROLL=["....x.......x...","....x.......x...","....x...x...x...","x.x.x.x.x.x.x.x."];
 const ELISE_B1=[[0,11,2],[2,10,2,1],[4,11,2],[6,10,2,1],[8,11,2],[10,8,2],[12,10,2],[14,9,2]];
-const ELISE_B2=[[0,7,6],[8,2,2],[10,4,2],[12,8,4]];
+const ELISE_B2=[[0,7,6],[8,2,2],[10,4,2],[12,7,4]];
 const ELISE_B3=[[0,4,2],[2,6,2],[4,8,2],[6,9,8]];
 const ELISE_CH=[ELISE_B1,ELISE_B2,ELISE_B3,ELISE_B1,ELISE_B2,ELISE_B3,ELISE_B1,[[0,7,14]]];
-const TURK_B4=[[0,7,2],[2,6,2],[4,7,2],[6,8,2],[8,7,2],[10,6,2],[12,7,4]];
+const TURK_B4=[[0,15,2],[2,14,2],[4,13,2],[6,14,2],[8,16,8]];
 const TURK_CH=[
  [[0,8,2],[2,7,2],[4,6,2],[6,7,2],[8,9,4]],
  [[0,10,2],[2,9,2],[4,8,2],[6,9,2],[8,11,4]],
- [[0,12,2],[2,11,2],[4,10,2,1],[6,11,2],[8,8,4]],
+ [[0,12,2],[2,11,2],[4,10,2,1],[6,11,2],[8,15,2],[10,14,2],[12,13,2],[14,14,2]],
  TURK_B4,
  [[0,9,2],[2,8,2],[4,7,2],[6,8,2],[8,9,2],[10,10,2],[12,11,2],[14,12,2]],
  [[0,11,2],[2,10,2],[4,9,2],[6,8,2],[8,7,6]],
@@ -529,7 +529,7 @@ const TURK_CH=[
  TURK_B4];
 const SPRING_B1=[[0,7,4],[4,9,4],[8,11,8]];
 const SPRING_B2=[[0,11,2],[2,12,2],[4,11,2],[6,10,2],[8,9,2],[10,8,2],[12,7,4]];
-const SPRING_B4=[[0,11,2],[2,12,2],[4,11,2],[6,10,2],[8,9,4],[12,7,4]];
+const SPRING_B4=[[0,11,2],[2,12,2],[4,11,2],[6,10,2],[8,9,2],[10,8,2],[12,7,4]];
 const SPRING_CH=[SPRING_B1,SPRING_B2,SPRING_B1,SPRING_B4,SPRING_B1,SPRING_B2,SPRING_B1,SPRING_B4];
 const TWINK_CH=[
  [[0,0,4],[4,0,4],[8,4,4],[12,4,4]],
@@ -548,7 +548,7 @@ const TRACKS=[
  {id:"canon",title:"CANON",jp:"パッヘルベルのカノン",bpm:120,hue:150,kit:"neon",lead:"pluck",
   root:50,leadRoot:62,scale:[0,2,4,5,7,9,11],prog:[0,4,5,2,3,0,3,4],stack:[0,2,4],
   sections:[
-   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5},
+   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5,melody:CANON_CH},
    {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.45,melody:CANON_CH,fill:1},
    {name:"BUILD",bars:8,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r...r...r...r...",pad:1,arp:2,arpV:.7,melody:CANON_CH,riser:2},
    {name:"CHORUS",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r...",arp:4,arpV:.5,melody:CANON_CH,crash:1,fill:1},
@@ -559,7 +559,7 @@ const TRACKS=[
  {id:"ode",title:"ODE TO JOY",jp:"歓喜の歌（ベートーヴェン）",bpm:132,hue:40,kit:"neon",lead:"saw",
   root:60,leadRoot:72,scale:[0,2,4,5,7,9,11],prog:[0,4],stack:[0,2,4],
   sections:[
-   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.6},
+   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.6,melody:ODE_CH},
    {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.45,bass:"r.r.r.r.r.r.r.r.",arp:4,arpV:.45,melody:ODE_CH,fill:1},
    {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r.r.r.r.r.r.r.r.",pad:1,arp:2,arpV:.7,melody:ODE_CH,riser:2},
    {name:"CHORUS",bars:8,kick:"x...x...x...x..x",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r.r.r.r.r.r.r.r.",stabs:"..x...x...x...x.",arp:4,arpV:.5,melody:ODE_CH,crash:1,fill:1},
@@ -570,7 +570,7 @@ const TRACKS=[
  {id:"fate",title:"FATE",jp:"運命（ベートーヴェン）",bpm:165,hue:350,kit:"hard",lead:"super",
   root:48,leadRoot:60,scale:[0,2,3,5,7,8,10],prog:[0,3,0,4],stack:[0,2,4],
   sections:[
-   {name:"INTRO",bars:4,skip:2,kick:"x...x...x...x...",snare:"................",hatO:"..x...x...x...x.",hatOV:.6,bass:"r.......",pad:1,arp:4,arpV:.6},
+   {name:"INTRO",bars:4,skip:2,kick:"x...x...x...x...",snare:"................",hatO:"..x...x...x...x.",hatOV:.6,bass:"r.......",pad:1,arp:4,arpV:.6,melody:FATE_CH},
    {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.35,hatO:"..x...x...x...x.",hatOV:.5,bass:"..r...r...r...r.",arp:4,arpV:.5,melody:FATE_CH,fill:1},
    {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:SN_ROLL,hatO:"..x...x...x...x.",hatOV:.6,bass:"..r...r...r...r.",pad:1,arp:2,arpV:.7,melody:FATE_CH,riser:2},
    {name:"CHORUS",bars:8,kick:"x...x...x...x.x.",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"..r...r...r...r.",stabs:"..x...x...x...x.",arp:4,arpV:.6,melody:FATE_CH,crash:1,fill:1},
@@ -581,7 +581,7 @@ const TRACKS=[
  {id:"elise",title:"FÜR ELISE",jp:"エリーゼのために（ベートーヴェン）",bpm:116,hue:265,kit:"neon",lead:"pluck",
   root:45,leadRoot:57,scale:[0,2,3,5,7,8,11],prog:[0,0,4,0,0,4,0,0],stack:[0,2,4],
   sections:[
-   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5},
+   {name:"INTRO",bars:4,skip:2,kick:"................",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5,melody:ELISE_CH},
    {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.45,melody:ELISE_CH,fill:1},
    {name:"BUILD",bars:8,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r...r...r...r...",pad:1,arp:2,arpV:.7,melody:ELISE_CH,riser:2},
    {name:"CHORUS",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r...",arp:4,arpV:.5,melody:ELISE_CH,crash:1,fill:1},
@@ -592,7 +592,7 @@ const TRACKS=[
  {id:"turk",title:"TURKISH MARCH",jp:"トルコ行進曲（モーツァルト）",bpm:144,hue:200,kit:"neon",lead:"saw",
   root:45,leadRoot:57,scale:[0,2,3,5,7,8,11],prog:[0,4,4,0,0,4,0,0],stack:[0,2,4],
   sections:[
-   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5},
+   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5,melody:TURK_CH},
    {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.45,bass:"r.r.r.r.r.r.r.r.",arp:4,arpV:.45,melody:TURK_CH,fill:1},
    {name:"BUILD",bars:8,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r.r.r.r.r.r.r.r.",pad:1,arp:2,arpV:.7,melody:TURK_CH,riser:2},
    {name:"CHORUS",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r.r.r.r.r.r.r.r.",arp:4,arpV:.5,melody:TURK_CH,crash:1,fill:1},
@@ -603,7 +603,7 @@ const TRACKS=[
  {id:"spring",title:"SPRING",jp:"四季『春』（ヴィヴァルディ）",bpm:112,hue:95,kit:"neon",lead:"pluck",
   root:52,leadRoot:64,scale:[0,2,4,5,7,9,11],prog:[0,4,0,4],stack:[0,2,4],
   sections:[
-   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5},
+   {name:"INTRO",bars:4,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.6,bass:"r.......",pad:1,arp:4,arpV:.5,melody:SPRING_CH},
    {name:"VERSE",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.45,melody:SPRING_CH,fill:1},
    {name:"BUILD",bars:8,kick:"x...x...x...x...",snare:SN_ROLL,hatC:"..x...x...x...x.",bass:"r...r...r...r...",pad:1,arp:2,arpV:.7,melody:SPRING_CH,riser:2},
    {name:"CHORUS",bars:8,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"x.x.x.x.x.x.x.",hatV:.5,hatO:"..x...x...x...x.",hatOV:.5,bass:"r...r...r...r...",arp:4,arpV:.5,melody:SPRING_CH,crash:1,fill:1},
@@ -614,7 +614,7 @@ const TRACKS=[
  {id:"tut",title:"TUTORIAL",jp:"チュートリアル（きらきら星）",bpm:100,hue:190,kit:"neon",lead:"pluck",tut:true,
   root:48,leadRoot:72,scale:[0,2,4,5,7,9,11],prog:[0,3,0,4],stack:[0,2,4],
   sections:[
-   {name:"INTRO",bars:2,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.5,bass:"r.......",pad:1,arp:4,arpV:.4},
+   {name:"INTRO",bars:2,skip:2,kick:"x.......x.......",snare:"................",hatC:"..x...x...x...x.",hatV:.5,bass:"r.......",pad:1,arp:4,arpV:.4,melody:TWINK_CH},
    {name:"VERSE",bars:4,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.4,melody:TWINK_CH},
    {name:"BUILD",bars:4,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.4,melody:TWINK_CH},
    {name:"CHORUS",bars:4,kick:"x...x...x...x...",snare:"....x.......x...",hatC:"..x...x...x...x.",bass:"r...r...r...r...",arp:4,arpV:.4,melody:TWINK_CH},
@@ -1106,7 +1106,7 @@ const demoMode=()=>state==="title";
 /* ================= layout ================= */
 function layout(){
   W=stage.clientWidth;H=stage.clientHeight;
-  dpr=Math.min(window.devicePixelRatio||1,2);
+  dpr=Math.min(window.devicePixelRatio||1,W<820?1.5:2);
   cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
   ctx.setTransform(dpr,0,0,dpr,0,0);
   const top=$("hud").offsetHeight+6;
